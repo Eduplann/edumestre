@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduMestre Pro</title>
+    <!-- Configurações para PWA (Instalável) -->
+    <meta name="theme-color" content="#1E3A8A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Fontes e Ícones -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-principal: #0F172A;
+            --bg-cards: #1E293B;
+            --azul-royal: #1E3A8A;
+            --ciano-neon: #06B6D4;
+            --texto-claro: #F8FAFC;
+            --texto-mutado: #94A3B8;
+            --borda: rgba(6, 182, 212, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-principal); color: var(--texto-claro); padding-bottom: 30px; }
+
+        header {
+            background: linear-gradient(135deg, var(--azul-royal), var(--ciano-neon));
+            padding: 25px 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+            margin-bottom: 25px;
+        }
+
+        .header-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .header-logo i { font-size: 1.8rem; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .header-logo h1 { font-size: 1.5rem; font-weight: 700; }
+
+        main { padding: 0 15px; }
+        h3 { font-size: 1.2rem; margin-bottom: 15px; padding-left: 5px; border-left: 4px solid var(--ciano-neon); }
+
+        .grid-recursos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card {
+            background-color: var(--bg-cards); border: 1px solid var(--borda); border-radius: 16px;
+            padding: 20px 15px; text-align: left; cursor: pointer; transition: all 0.3s ease;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .card:active { transform: scale(0.95); }
+        .card i { font-size: 1.8rem; }
+        .card h4 { font-size: 0.95rem; font-weight: 600; }
+        .card p { font-size: 0.75rem; color: var(--texto-mutado); line-height: 1.3; }
+
+        .card.azul i { color: #3B82F6; }
+        .card.verde i { color: #10B981; }
+        .card.roxo i { color: #8B5CF6; }
+        .card.laranja i { color: #F59E0B; }
+        .card.rosa i { color: #EC4899; }
+        .card.vermelho i { color: #EF4444; }
+
+        .painel-conteudo { background-color: var(--bg-cards); border-radius: 16px; padding: 20px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .campo-busca, .textarea-app { width: 100%; padding: 12px; background-color: var(--bg-principal); border: 1px solid var(--borda); border-radius: 8px; color: #fff; margin-bottom: 15px; }
+        
+        .tabela-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background-color: rgba(6, 182, 212, 0.1); color: var(--ciano-neon); }
+
+        .btn-salvar { border: none; color: white; padding: 12px 15px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+        .btn-excluir { background: #EF4444; border: none; color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
+        .status-salvamento { font-size: 0.8rem; text-align: center; margin-top: 8px; color: #10B981; display: none; }
+        
+        .row-aluno-add { display: flex; gap: 10px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <div>
+                <h1>EduMestre Pro</h1>
+                <span style="font-size: 0.7rem; letter-spacing: 1px; color: var(--ciano-neon); font-weight: bold; display:block;">SISTEMA PROTEGIDO POR SENHA</span>
+            </div>
+        </div>
+        <div class="escola-info">
+            <input type="text" id="input-escola" class="campo-busca" style="margin-bottom:0; background:rgba(0,0,0,0.2); border:none;" placeholder="Digite o Nome da Escola..." onchange="salvarNomeEscola()">
+        </div>
+    </header>
+
+    <main>
+        <h3>Painel de Controle</h3>
+        
+        <div class="grid-recursos">
+            <div class="card azul" onclick="abrirModulo('planejamento')">
+                <i class="fa-solid fa-layer-group"></i>
+                <h4>Planejamento & BNCC</h4>
+                <p>Anual, Semestral, Unidades (até 6) e Habilidades.</p>
+            </div>
+            
+            <div class="card verde" onclick="abrirModulo('alunos')">
+                <i class="fa-solid fa-users-rectangle"></i>
+                <h4>Alunos & Notas</h4>
+                <p>Gerencie nomes, notas de exames/trabalhos e observações.</p>
+            </div>
+
+            <div class="card roxo" onclick="abrirModulo('didatico')">
+                <i class="fa-solid fa-brain"></i>
+                <h4>Mapas & Conteúdos</h4>
+                <p>Mapas mentais, textos de apoio e slides explicativos.</p>
+            </div>
+
+            <div class="card laranja" onclick="abrirModulo('exercicios')">
+                <i class="fa-solid fa-file-pen"></i>
+                <h4>Exercícios</h4>
+                <p>Banco de questões estruturadas por série.</p>
+            </div>
+
+            <div class="card rosa" onclick="abrirModulo('horarios')">
+                <i class="fa-solid fa-hourglass-start"></i>
+                <h4>Horários de Aulas</h4>
+                <p>Início e término das aulas de todas as séries.</p>
+            </div>
+
+            <div class="card vermelho" onclick="abrirModulo('anotacoes')">
+                <i class="fa-solid fa-note-sticky"></i>
+                <h4>Diário de Classe</h4>
+                <p>Anotações e relatos finais após o término das aulas.</p>
+            </div>
+        </div>
+
+        <div class="painel-conteudo" id="painel-dinamico">
+            <h4 style="margin-bottom: 10px; color: var(--ciano-neon);">Selecione um módulo acima</h4>
+            <p style="color: var(--texto-mutado); font-size: 0.9rem;">Pronto para uso. Modificações exigem a senha <strong>26</strong>. Exclusões exigem a senha <strong>2026</strong>.</p>
+        </div>
+    </main>
+
+    <script>
+        // Inicialização do Banco de Dados Local completamente limpo
+        const dadosPadrao = {
+            nomeEscola: "",
+            planejamentoTexto: "",
+            diarioTexto: "",
+            mapasTexto: "",
+            exerciciosTexto: "",
+            horariosTexto: "",
+            alunos: []
+        };
+
+        let dadosApp = JSON.parse(localStorage.getItem('eduMestre_dados_seguros')) || dadosPadrao;
+
+        // Carrega o nome da escola salvo ao abrir o app
+        document.getElementById('input-escola').value = dadosApp.nomeEscola;
+
+        function verificarSenha(tipo) {
+            if (tipo === 'editar') {
+                const senha = prompt("Digite a senha para SALVAR/EDITAR:");
+                if (senha === "26") return true;
+            } else if (tipo === 'excluir') {
+                const senha = prompt("Digite a senha para EXCLUIR:");
+                if (senha === "2026") return true;
+            }
+            alert("Senha incorreta ou operação cancelada!");
+            return false;
+        }
+
+        function salvarNoAparelho() {
+            localStorage.setItem('eduMestre_dados_seguros', JSON.stringify(dadosApp));
+            const status = document.getElementById('status-salva');
+            if(status) {
+                status.style.display = 'block';
+                setTimeout(() => status.style.display = 'none', 2000);
+            }
+        }
+
+        function salvarNomeEscola() {
+            if (verificarSenha('editar')) {
+                dadosApp.nomeEscola = document.getElementById('input-escola').value;
+                localStorage.setItem('eduMestre_dados_seguros', JSON.stringify(dadosApp));
+            } else {
+                document.getElementById('input-escola').value = dadosApp.nomeEscola;
+            }
+        }
+
+        function abrirModulo(modulo) {
+            const painel = document.getElementById('painel-dinamico');
+            
+            if (modulo === 'planejamento') {
+                painel.innerHTML = `
+                    <h4 style="color: #3B82F6; margin-bottom: 15px;"><i class="fa-solid fa-layer-group"></i> Planejamento Integrado (BNCC)</h4>
+                    <select class="campo-busca">
+                        <option>Plano Anual</option>
+                        <option>Plano Semestral</option>
+                        <option>Unidade 1</option><option>Unidade 2</option><option>Unidade 3</option>
+                        <option>Unidade 4</option><option>Unidade 5</option><option>Unidade 6</option>
+                    </select>
+                    <textarea id="txt-planejamento" class="textarea-app" style="height: 150px;" placeholder="Digite o planejamento, série, disciplina e códigos BNCC aqui...">${dadosApp.planejamentoTexto}</textarea>
+                    <button class="btn-salvar" style="background:#3B82F6;" onclick="salvarPlanejamento()">
+                        <i class="fa-solid fa-floppy-disk"></i> Gravar Alterações (Senha 26)
+                    </button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Gravado localmente!</div>
+                `;
+            } 
+            else if (modulo === 'alunos') {
+                painel.innerHTML = `
+                    <h4 style="color: #10B981; margin-bottom: 15px;"><i class="fa-solid fa-users-rectangle"></i> Lista de Alunos, Notas e Observações</h4>
+                    
+                    <div class="row-aluno-add">
+                        <input type="text" id="novo-aluno-nome" class="campo-busca" style="margin-bottom:0;" placeholder="Nome do Aluno">
+                        <button class="btn-salvar" style="background:#10B981; margin:0; width:auto; white-space:nowrap;" onclick="adicionarAluno()">+ Add Aluno</button>
+                    </div>
+
+                    <div class="tabela-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome do Aluno</th>
+                                    <th>Trab.</th>
+                                    <th>Exame</th>
+                                    <th>Observação Individual</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-alunos-corpo">
+                                ${dadosApp.alunos.map((a, index) => `
+                                    <tr>
+                                        <td><strong>${a.nome}</strong></td>
+                                        <td><input type="number" step="0.1" value="${a.notaTrabalho}" id="trab-${index}" style="width:55px; background:none; border:1px solid var(--borda); color:white; text-align:center; border-radius:4px;"></td>
+                                        <td><input type="number" step="0.1" value="${a.notaExame}" id="exame-${index}" style="width:55px; background:none; border:1px solid var(--borda); color:white; text-align:center; border-radius:4px;"></td>
+                                        <td><input type="text" value="${a.obs}" id="obs-${index}" style="width:100%; background:none; border:none; color:var(--texto-claro); font-size:0.85rem;" placeholder="Falta de atenção, evolução..."></td>
+                                        <td><button class="btn-excluir" onclick="removerAluno(${index})"><i class="fa-solid fa-trash"></i></button></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <button class="btn-salvar" style="background:#10B981; margin-top:15px;" onclick="salvarNotasAlunos()">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar Notas e Mudanças (Senha 26)
+                    </button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Caderneta atualizada com sucesso!</div>
+                `;
+            }
+            else if (modulo === 'didatico') {
+                painel.innerHTML = `
+                    <h4 style="color: #8B5CF6; margin-bottom: 15px;"><i class="fa-solid fa-brain"></i> Mapas Mentais, Textos e Slides</h4>
+                    <textarea id="txt-mapas" class="textarea-app" style="height: 150px;" placeholder="Insira roteiros de slides, links de mapas mentais ou textos de apoio descritivos...">${dadosApp.mapasTexto}</textarea>
+                    <button class="btn-salvar" style="background:#8B5CF6;" onclick="salvarDidatico()">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar Conteúdo (Senha 26)
+                    </button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Biblioteca salva!</div>
+                `;
+            }
+            else if (modulo === 'exercicios') {
+                painel.innerHTML = `
+                    <h4 style="color: #F59E0B; margin-bottom: 15px;"><i class="fa-solid fa-file-pen"></i> Banco de Exercícios</h4>
+                    <textarea id="txt-exercicios" class="textarea-app" style="height: 150px;" placeholder="Monte ou cole aqui o seu banco de questões e avaliações completas...">${dadosApp.exerciciosTexto}</textarea>
+                    <button class="btn-salvar" style="background:#F59E0B; color: black;" onclick="salvarExercicios()">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar Exercícios (Senha 26)
+                    </button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Banco de questões atualizado!</div>
+                `;
+            }
+            else if (modulo === 'horarios') {
+                painel.innerHTML = `
+                    <h4 style="color: #EC4899; margin-bottom: 15px;"><i class="fa-solid fa-hourglass-start"></i> Grade Horária (Início e Fim por Série)</h4>
+                    <textarea id="txt-horarios" class="textarea-app" style="height: 150px;" placeholder="Exemplo de preenchimento:\n6º Ano - Matemática: 07:00 às 07:50\n7º Ano - Ciências: 07:50 às 08:40">${dadosApp.horariosTexto}</textarea>
+                    <button class="btn-salvar" style="background:#EC4899;" onclick="salvarHorarios()">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar Cronograma (Senha 26)
+                    </button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Horários salvos!</div>
+                `;
+            }
+            else if (modulo === 'anotacoes') {
+                painel.innerHTML = `
+                    <h4 style="color: #EF4444; margin-bottom: 15px;"><i class="fa-solid fa-note-sticky"></i> Pós-Aula / Diário de Classe</h4>
+                    <textarea id="txt-diario" class="textarea-app" style="height: 150px;" placeholder="Relate o encerramento da aula, o comportamento da classe ou tarefas cobradas para casa...">${dadosApp.diarioTexto}</textarea>
+                    <button class="btn-salvar" style="background:#EF4444;" onclick="salvarDiario()">
+                        <i class="fa-solid fa-floppy-disk"></i> Gravar Diário (Senha 26)
+                    </button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Relato de aula arquivado!</div>
+                `;
+            }
+        }
+
+        // Ações de salvamento protegidas por senha
+        function salvarPlanejamento() {
+            if (verificarSenha('editar')) { dadosApp.planejamentoTexto = document.getElementById('txt-planejamento').value; salvarNoAparelho(); }
+        }
+
+        function salvarDiario() {
+            if (verificarSenha('editar')) { dadosApp.diarioTexto = document.getElementById('txt-diario').value; salvarNoAparelho(); }
+        }
+
+        function salvarDidatico() {
+            if (verificarSenha('editar')) { dadosApp.mapasTexto = document.getElementById('txt-mapas').value; salvarNoAparelho(); }
+        }
+
+        function salvarExercicios() {
+            if (verificarSenha('editar')) { dadosApp.exerciciosTexto = document.getElementById('txt-exercicios').value; salvarNoAparelho(); }
+        }
+
+        function salvarHorarios() {
+            if (verificarSenha('editar')) { dadosApp.horariosTexto = document.getElementById('txt-horarios').value; salvarNoAparelho(); }
+        }
+
+        // Funções da lista de alunos
+        function adicionarAluno() {
+            const nomeInput = document.getElementById('novo-aluno-nome');
+            if (!nomeInput.value.trim()) return alert("Digite o nome do aluno!");
+            
+            if (verificarSenha('editar')) {
+                dadosApp.alunos.push({
+                    nome: nomeInput.value.trim(),
+                    notaTrabalho: 0,
+                    notaExame: 0,
+                    obs: ""
+                });
+                nomeInput.value = "";
+                salvarNoAparelho();
+                abrirModulo('alunos');
+            }
+        }
+
+        function salvarNotasAlunos() {
+            if (verificarSenha('editar')) {
+                dadosApp.alunos.forEach((aluno, index) => {
+                    dadosApp.alunos[index].notaTrabalho = parseFloat(document.getElementById(`trab-${index}`).value) || 0;
+                    dadosApp.alunos[index].notaExame = parseFloat(document.getElementById(`exame-${index}`).value) || 0;
+                    dadosApp.alunos[index].obs = document.getElementById(`obs-${index}`).value;
+                });
+                salvarNoAparelho();
+            }
+        }
+
+        function removerAluno(index) {
+            if (verificarSenha('excluir')) {
+                dadosApp.alunos.splice(index, 1);
+                salvarNoAparelho();
+                abrirModulo('alunos');
+            }
+        }
+
+        // Registro Automático do Service Worker para o PWA do GitHub
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log('PWA carregado com sucesso.'))
+            .catch(err => console.log('Erro PWA:', err));
+        }
+    </script>
+</body>
+</html>

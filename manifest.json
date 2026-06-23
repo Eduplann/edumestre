@@ -1,0 +1,15 @@
+{
+  "name": "EduMestre Pro",
+  "short_name": "EduMestre",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#1E3A8A",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2940/2940651.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
