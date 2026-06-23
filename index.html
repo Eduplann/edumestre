@@ -4,352 +4,501 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduMestre Pro</title>
-    <!-- Configurações para PWA (Instalável) -->
-    <meta name="theme-color" content="#1E3A8A">
+    <meta name="theme-color" content="#0F172A">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="./manifest.json">
     
-    <!-- Fontes e Ícones -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --bg-principal: #0F172A;
-            --bg-cards: #1E293B;
-            --azul-royal: #1E3A8A;
-            --ciano-neon: #06B6D4;
+            --bg-principal: #090D1A;
+            --bg-cards: #131C33;
+            --bg-inputs: #1B2647;
+            --azul-premium: #2563EB;
+            --ciano-glow: #06B6D4;
+            --magenta-glow: #D946EF;
             --texto-claro: #F8FAFC;
-            --texto-mutado: #94A3B8;
-            --borda: rgba(6, 182, 212, 0.2);
+            --texto-mutado: #64748B;
+            --borda-glow: rgba(6, 182, 212, 0.15);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-principal); color: var(--texto-claro); padding-bottom: 30px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-principal); color: var(--texto-claro); padding-bottom: 40px; }
+
+        /* Tela de Bloqueio Inicial */
+        #tela-bloqueio {
+            position: fixed; inset: 0; background: var(--bg-principal); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+        }
+        .lock-box {
+            background: var(--bg-cards); border: 1px solid var(--borda-glow); padding: 30px 25px;
+            border-radius: 20px; width: 100%; max-width: 360px; text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
 
         header {
-            background: linear-gradient(135deg, var(--azul-royal), var(--ciano-neon));
-            padding: 25px 20px;
-            border-bottom-left-radius: 25px;
-            border-bottom-right-radius: 25px;
-            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+            background: linear-gradient(145deg, #111827, #0B1329);
+            padding: 30px 20px 25px 20px;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             margin-bottom: 25px;
         }
 
-        .header-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-        .header-logo i { font-size: 1.8rem; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-        .header-logo h1 { font-size: 1.5rem; font-weight: 700; }
+        .brand-container { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .logo-emblem {
+            position: relative; width: 45px; height: 45px;
+            background: linear-gradient(135deg, var(--ciano-glow), var(--azul-premium));
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+        }
+        .logo-emblem i { font-size: 1.4rem; color: #fff; z-index: 2; }
+        .logo-emblem::after {
+            content: ''; position: absolute; inset: -2px; 
+            background: linear-gradient(135deg, var(--magenta-glow), var(--ciano-glow));
+            border-radius: 14px; z-index: 1; opacity: 0.5; filter: blur(4px);
+        }
+        .brand-text h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(to right, #FFF, #94A3B8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .brand-text span { font-size: 0.65rem; letter-spacing: 1.5px; color: var(--ciano-glow); font-weight: 700; display: block; text-transform: uppercase; }
+
+        .seletor-escola-container {
+            display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.03);
+            padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .seletor-escola-container select { flex: 1; background: none; border: none; color: #fff; font-size: 0.95rem; font-weight: 600; outline: none; cursor: pointer; }
+        .seletor-escola-container select option { background: var(--bg-cards); color: #fff; }
 
         main { padding: 0 15px; }
-        h3 { font-size: 1.2rem; margin-bottom: 15px; padding-left: 5px; border-left: 4px solid var(--ciano-neon); }
+        h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; padding-left: 8px; border-left: 4px solid var(--ciano-glow); color: #E2E8F0; }
 
         .grid-recursos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .card {
-            background-color: var(--bg-cards); border: 1px solid var(--borda); border-radius: 16px;
-            padding: 20px 15px; text-align: left; cursor: pointer; transition: all 0.3s ease;
-            display: flex; flex-direction: column; gap: 10px;
+            background-color: var(--bg-cards); border: 1px solid var(--borda-glow); border-radius: 16px;
+            padding: 20px 15px; text-align: left; cursor: pointer; transition: all 0.25s ease;
+            display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.15);
         }
-        .card:active { transform: scale(0.95); }
-        .card i { font-size: 1.8rem; }
-        .card h4 { font-size: 0.95rem; font-weight: 600; }
+        .card:active { transform: scale(0.96); }
+        .card i { font-size: 1.6rem; }
+        .card h4 { font-size: 0.9rem; font-weight: 700; color: #F1F5F9; }
         .card p { font-size: 0.75rem; color: var(--texto-mutado); line-height: 1.3; }
 
-        .card.azul i { color: #3B82F6; }
-        .card.verde i { color: #10B981; }
-        .card.roxo i { color: #8B5CF6; }
-        .card.laranja i { color: #F59E0B; }
-        .card.rosa i { color: #EC4899; }
-        .card.vermelho i { color: #EF4444; }
+        .card.azul i { color: var(--azul-premium); text-shadow: 0 0 10px rgba(37,99,235,0.4); }
+        .card.verde i { color: #10B981; text-shadow: 0 0 10px rgba(16,185,129,0.4); }
+        .card.roxo i { color: var(--magenta-glow); text-shadow: 0 0 10px rgba(217,70,239,0.4); }
+        .card.laranja i { color: #F59E0B; text-shadow: 0 0 10px rgba(245,158,11,0.4); }
+        .card.rosa i { color: #EC4899; text-shadow: 0 0 10px rgba(236,72,153,0.4); }
+        .card.vermelho i { color: #EF4444; text-shadow: 0 0 10px rgba(239,68,68,0.4); }
 
-        .painel-conteudo { background-color: var(--bg-cards); border-radius: 16px; padding: 20px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .campo-busca, .textarea-app { width: 100%; padding: 12px; background-color: var(--bg-principal); border: 1px solid var(--borda); border-radius: 8px; color: #fff; margin-bottom: 15px; }
+        .painel-conteudo { background-color: var(--bg-cards); border-radius: 16px; padding: 22px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .campo-busca, .textarea-app { width: 100%; padding: 12px 14px; background-color: var(--bg-inputs); border: 1px solid var(--borda-glow); border-radius: 10px; color: #fff; margin-bottom: 15px; font-size: 0.9rem; }
+        .textarea-app { outline: none; resize: vertical; }
         
         .tabela-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
-        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        th { background-color: rgba(6, 182, 212, 0.1); color: var(--ciano-neon); }
+        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        th { background-color: rgba(6, 182, 212, 0.05); color: var(--ciano-glow); font-weight: 600; }
 
-        .btn-salvar { border: none; color: white; padding: 12px 15px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
-        .btn-excluir { background: #EF4444; border: none; color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
-        .status-salvamento { font-size: 0.8rem; text-align: center; margin-top: 8px; color: #10B981; display: none; }
+        .btn-salvar { border: none; color: white; padding: 12px 15px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; font-size: 0.9rem; transition: background 0.2s; }
+        .btn-excluir { background: rgba(239, 68, 68, 0.15); border: 1px solid #EF4444; color: #EF4444; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
+        .status-salvamento { font-size: 0.8rem; text-align: center; margin-top: 8px; color: #10B981; font-weight: 600; display: none; }
         
         .row-aluno-add { display: flex; gap: 10px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
+    <div id="tela-bloqueio">
+        <div class="lock-box">
+            <div class="logo-emblem" style="margin: 0 auto 15px auto;">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 id="lock-titulo" style="font-size: 1.2rem; margin-bottom: 5px;">Acesso Restrito</h2>
+            <p id="lock-subtitulo" style="font-size: 0.75rem; color: var(--texto-mutado); margin-bottom: 20px;">Carregando sistema seguro...</p>
+            <input type="password" id="input-senha-lock" class="campo-busca" style="text-align: center; font-size: 1.1rem; letter-spacing: 4px;" placeholder="****">
+            <button class="btn-salvar" style="background: linear-gradient(to right, var(--ciano-glow), var(--azul-premium));" onclick="validarEntradaSistema()">Entrar no Sistema</button>
+            <button onclick="limparTudoEForcarReset()" style="background:none; border:none; color:#EF4444; font-size:0.75rem; margin-top:15px; cursor:pointer; text-decoration:underline;">Limpar Erros de Memória Antiga</button>
+        </div>
+    </div>
+
     <header>
-        <div class="header-logo">
-            <i class="fa-solid fa-graduation-cap"></i>
-            <div>
-                <h1>EduMestre Pro</h1>
-                <span style="font-size: 0.7rem; letter-spacing: 1px; color: var(--ciano-neon); font-weight: bold; display:block;">SISTEMA PROTEGIDO POR SENHA</span>
+        <div class="brand-container">
+            <div class="logo-emblem">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div class="brand-text">
+                <h1>EduMestre Glow</h1>
+                <span>Professional Suite</span>
             </div>
         </div>
-        <div class="escola-info">
-            <input type="text" id="input-escola" class="campo-busca" style="margin-bottom:0; background:rgba(0,0,0,0.2); border:none;" placeholder="Digite o Nome da Escola..." onchange="salvarNomeEscola()">
+        
+        <div class="seletor-escola-container">
+            <select id="select-escola" onchange="mudarEscolaAtiva()">
+                </select>
+            <button onclick="adicionarNovaEscola()" style="background: none; border: none; color: var(--ciano-glow); font-size: 1.1rem; cursor: pointer;" title="Adicionar Escola"><i class="fa-solid fa-circle-plus"></i></button>
+            <button onclick="excluirEscolaAtiva()" style="background: none; border: none; color: #EF4444; font-size: 1.1rem; cursor: pointer;" title="Excluir Escola Atual"><i class="fa-solid fa-trash-can"></i></button>
         </div>
     </header>
 
     <main>
-        <h3>Painel de Controle</h3>
+        <h3>Painel Operacional</h3>
         
         <div class="grid-recursos">
             <div class="card azul" onclick="abrirModulo('planejamento')">
-                <i class="fa-solid fa-layer-group"></i>
-                <h4>Planejamento & BNCC</h4>
-                <p>Anual, Semestral, Unidades (até 6) e Habilidades.</p>
+                <i class="fa-solid fa-folder-tree"></i>
+                <h4>Planos por Turma</h4>
+                <p>Conteúdos individuais separados por cada sala.</p>
             </div>
             
             <div class="card verde" onclick="abrirModulo('alunos')">
-                <i class="fa-solid fa-users-rectangle"></i>
+                <i class="fa-solid fa-address-book"></i>
                 <h4>Alunos & Notas</h4>
-                <p>Gerencie nomes, notas de exames/trabalhos e observações.</p>
+                <p>Caderneta de notas ou bloco de ocorrências.</p>
             </div>
 
             <div class="card roxo" onclick="abrirModulo('didatico')">
-                <i class="fa-solid fa-brain"></i>
-                <h4>Mapas & Conteúdos</h4>
-                <p>Mapas mentais, textos de apoio e slides explicativos.</p>
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h4>Mapas & Apoio</h4>
+                <p>Roteiros, links e conteúdos de suporte didático.</p>
             </div>
 
             <div class="card laranja" onclick="abrirModulo('exercicios')">
-                <i class="fa-solid fa-file-pen"></i>
-                <h4>Exercícios</h4>
-                <p>Banco de questões estruturadas por série.</p>
+                <i class="fa-solid fa-square-poll-horizontal"></i>
+                <h4>Banco de Questões</h4>
+                <p>Avaliações e exercícios arquivados.</p>
             </div>
 
             <div class="card rosa" onclick="abrirModulo('horarios')">
-                <i class="fa-solid fa-hourglass-start"></i>
-                <h4>Horários de Aulas</h4>
-                <p>Início e término das aulas de todas as séries.</p>
+                <i class="fa-solid fa-calendar-clock"></i>
+                <h4>Grade Horária</h4>
+                <p>Cronograma operacional estruturado.</p>
             </div>
 
             <div class="card vermelho" onclick="abrirModulo('anotacoes')">
-                <i class="fa-solid fa-note-sticky"></i>
+                <i class="fa-solid fa-feather-pointed"></i>
                 <h4>Diário de Classe</h4>
-                <p>Anotações e relatos finais após o término das aulas.</p>
+                <p>Relatos do encerramento das atividades.</p>
             </div>
         </div>
 
         <div class="painel-conteudo" id="painel-dinamico">
-            <h4 style="margin-bottom: 10px; color: var(--ciano-neon);">Selecione um módulo acima</h4>
-            <p style="color: var(--texto-mutado); font-size: 0.9rem;">Pronto para uso. Modificações exigem a senha <strong>26</strong>. Exclusões exigem a senha <strong>2026</strong>.</p>
-        </div>
+            </div>
     </main>
 
     <script>
-        // Inicialização do Banco de Dados Local completamente limpo
+        let senhaMaster = localStorage.getItem('eduMestre_senha_master');
+        let moduloAtivoGlobal = 'planejamento';
+
+        // ALTERAÇÃO: O banco de dados inicia 100% zerado e sem exemplos prévios.
         const dadosPadrao = {
-            nomeEscola: "",
-            planejamentoTexto: "",
-            diarioTexto: "",
-            mapasTexto: "",
-            exerciciosTexto: "",
-            horariosTexto: "",
-            alunos: []
+            escolaAtiva: 0,
+            escolas: []
         };
 
-        let dadosApp = JSON.parse(localStorage.getItem('eduMestre_dados_seguros')) || dadosPadrao;
+        let dadosApp = JSON.parse(localStorage.getItem('eduMestre_final_clean')) || dadosPadrao;
 
-        // Carrega o nome da escola salvo ao abrir o app
-        document.getElementById('input-escola').value = dadosApp.nomeEscola;
-
-        function verificarSenha(tipo) {
-            if (tipo === 'editar') {
-                const senha = prompt("Digite a senha para SALVAR/EDITAR:");
-                if (senha === "26") return true;
-            } else if (tipo === 'excluir') {
-                const senha = prompt("Digite a senha para EXCLUIR:");
-                if (senha === "2026") return true;
+        window.onload = function() {
+            const titulo = document.getElementById('lock-titulo');
+            const sub = document.getElementById('lock-subtitulo');
+            if (!senhaMaster) {
+                titulo.innerText = "Criar Nova Senha";
+                sub.innerText = "Defina sua senha de entrada permanente.";
             }
-            alert("Senha incorreta ou operação cancelada!");
-            return false;
+        }
+
+        function limparTudoEForcarReset() {
+            if(confirm("Deseja apagar totalmente a memória local do app para recomeçar do zero?")) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        }
+
+        function validarEntradaSistema() {
+            const campoSenha = document.getElementById('input-senha-lock');
+            const senhaDigitada = campoSenha.value.trim();
+            if (!senhaDigitada) return alert("Preencha a senha!");
+
+            if (!senhaMaster) {
+                localStorage.setItem('eduMestre_senha_master', senhaDigitada);
+                senhaMaster = senhaDigitada;
+                document.getElementById('tela-bloqueio').style.display = 'none';
+                executarInicializacaoTela();
+            } else {
+                if (senhaDigitada === senhaMaster) {
+                    document.getElementById('tela-bloqueio').style.display = 'none';
+                    executarInicializacaoTela();
+                } else {
+                    alert("Senha incorreta!");
+                    campoSenha.value = "";
+                }
+            }
+        }
+
+        function verificarSenhaExclusao() {
+            const checa = prompt("Digite sua Senha Master para confirmar a exclusão:");
+            return checa === senhaMaster;
         }
 
         function salvarNoAparelho() {
-            localStorage.setItem('eduMestre_dados_seguros', JSON.stringify(dadosApp));
+            localStorage.setItem('eduMestre_final_clean', JSON.stringify(dadosApp));
+            mostrarStatusNotificacao();
+        }
+
+        function mostrarStatusNotificacao() {
             const status = document.getElementById('status-salva');
             if(status) {
                 status.style.display = 'block';
-                setTimeout(() => status.style.display = 'none', 2000);
+                setTimeout(() => { if(status) status.style.display = 'none'; }, 1500);
             }
         }
 
-        function salvarNomeEscola() {
-            if (verificarSenha('editar')) {
-                dadosApp.nomeEscola = document.getElementById('input-escola').value;
-                localStorage.setItem('eduMestre_dados_seguros', JSON.stringify(dadosApp));
-            } else {
-                document.getElementById('input-escola').value = dadosApp.nomeEscola;
+        function atualizarSeletorEscolas() {
+            const select = document.getElementById('select-escola');
+            if (!dadosApp.escolas || dadosApp.escolas.length === 0) {
+                select.innerHTML = `<option value="">Nenhuma escola cadastrada</option>`;
+                return;
             }
+            select.innerHTML = dadosApp.escolas.map((esc, idx) => `
+                <option value="${idx}" ${dadosApp.escolaAtiva === idx ? 'selected' : ''}>${esc.nome}</option>
+            `).join('');
+        }
+
+        function ejecutarInicializacaoTela() {
+            atualizarSeletorEscolas();
+            if(dadosApp.escolas && dadosApp.escolas.length > 0) {
+                abrirModulo(moduloAtivoGlobal);
+            } else {
+                exibirPainelVazio();
+            }
+        }
+
+        function exibirPainelVazio() {
+            document.getElementById('painel-dinamico').innerHTML = `
+                <h4 style="margin-bottom: 10px; color: var(--ciano-glow); text-align:center;"><i class="fa-solid fa-folder-open"></i> Sem Escolas Registradas</h4>
+                <p style="color: var(--texto-mutado); font-size: 0.85rem; text-align:center;">Toque no botão de mais <strong>(+)</strong> localizado no seletor do topo para registrar sua primeira unidade de ensino.</p>
+            `;
+        }
+
+        function mudarEscolaAtiva() {
+            const val = document.getElementById('select-escola').value;
+            if(val === "") return;
+            dadosApp.escolaAtiva = parseInt(val);
+            salvarNoAparelho();
+            abrirModulo(moduloAtivoGlobal);
+        }
+
+        function adicionarNovaEscola() {
+            const nome = prompt("Digite o nome da nova Escola:");
+            if (!nome || !nome.trim()) return;
+            
+            if(!dadosApp.escolas) dadosApp.escolas = [];
+
+            dadosApp.escolas.push({
+                nome: nome.trim(),
+                diarioTexto: "", mapasTexto: "", exerciciosTexto: "", horariosTexto: "", observacoesLivres: "",
+                turmaAtiva: 0,
+                turmas: [], 
+                alunos: []
+            });
+            dadosApp.escolaAtiva = dadosApp.escolas.length - 1;
+            salvarNoAparelho();
+            atualizarSeletorEscolas();
+            abrirModulo(moduloAtivoGlobal);
+        }
+
+        function excluirEscolaAtiva() {
+            if (!dadosApp.escolas || dadosApp.escolas.length === 0) {
+                alert("Nenhuma escola para excluir!");
+                return;
+            }
+            
+            const escAtual = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(!escAtual) return;
+            
+            const confirmacaoGeral = confirm(`Deseja apagar permanentemente a escola "${escAtual.nome}"?`);
+            if (!confirmacaoGeral) return;
+
+            if (verificarSenhaExclusao()) {
+                dadosApp.escolas.splice(dadosApp.escolaAtiva, 1);
+                dadosApp.escolaAtiva = 0; 
+                
+                salvarNoAparelho();
+                atualizarSeletorEscolas();
+                
+                if(dadosApp.escolas.length > 0) {
+                    abrirModulo(moduloAtivoGlobal);
+                } else {
+                    exibirPainelVazio();
+                }
+            } else {
+                alert("Senha Master incorreta!");
+            }
+        }
+
+        function mudarTurmaAtiva() {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(!esc || !esc.turmas || esc.turmas.length === 0) return;
+            esc.turmaAtiva = parseInt(document.getElementById('select-turma-plano').value);
+            salvarNoAparelho();
+            document.getElementById('txt-planejamento').value = esc.turmas[esc.turmaAtiva].textoPlano;
+        }
+
+        function adicionarNovaTurma() {
+            if (!dadosApp.escolas || dadosApp.escolas.length === 0) return alert("Cadastre uma escola primeiro!");
+            const nome = prompt("Nome da Turma (Ex: 6° Ano B):");
+            if (!nome || !nome.trim()) return;
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(!esc.turmas) esc.turmas = [];
+            esc.turmas.push({ nomeTurma: nome.trim(), textoPlano: "" });
+            esc.turmaAtiva = esc.turmas.length - 1;
+            salvarNoAparelho();
+            abrirModulo('planejamento');
         }
 
         function abrirModulo(modulo) {
+            moduloAtivoGlobal = modulo;
+            if (!dadosApp.escolas || dadosApp.escolas.length === 0 || !dadosApp.escolas[dadosApp.escolaAtiva]) {
+                exibirPainelVazio();
+                return;
+            }
             const painel = document.getElementById('painel-dinamico');
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
             
             if (modulo === 'planejamento') {
-                painel.innerHTML = `
-                    <h4 style="color: #3B82F6; margin-bottom: 15px;"><i class="fa-solid fa-layer-group"></i> Planejamento Integrado (BNCC)</h4>
-                    <select class="campo-busca">
-                        <option>Plano Anual</option>
-                        <option>Plano Semestral</option>
-                        <option>Unidade 1</option><option>Unidade 2</option><option>Unidade 3</option>
-                        <option>Unidade 4</option><option>Unidade 5</option><option>Unidade 6</option>
-                    </select>
-                    <textarea id="txt-planejamento" class="textarea-app" style="height: 150px;" placeholder="Digite o planejamento, série, disciplina e códigos BNCC aqui...">${dadosApp.planejamentoTexto}</textarea>
-                    <button class="btn-salvar" style="background:#3B82F6;" onclick="salvarPlanejamento()">
-                        <i class="fa-solid fa-floppy-disk"></i> Gravar Alterações (Senha 26)
-                    </button>
-                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Gravado localmente!</div>
-                `;
+                if(!esc.turmas || esc.turmas.length === 0) {
+                    painel.innerHTML = `
+                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planejamento por Sala</h4>
+                        <p style="color: var(--texto-mutado); font-size: 0.85rem; margin-bottom: 15px;">Nenhuma sala ou turma criada nesta escola.</p>
+                        <button class="btn-salvar" style="background:var(--azul-premium); width:auto;" onclick="adicionarNovaTurma()">+ Criar Primeira Sala</button>
+                    `;
+                } else {
+                    painel.innerHTML = `
+                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planejamento por Sala</h4>
+                        <div class="row-aluno-add" style="margin-bottom: 15px;">
+                            <select id="select-turma-plano" class="campo-busca" style="margin-bottom:0;" onchange="mudarTurmaAtiva()">
+                                ${esc.turmas.map((t, i) => `<option value="${i}" ${esc.turmaAtiva == i ? 'selected' : ''}>${t.nomeTurma}</option>`).join('')}
+                            </select>
+                            <button class="btn-salvar" style="background:var(--azul-premium); margin:0; width:auto; white-space:nowrap;" onclick="adicionarNovaTurma()">+ Criar Sala</button>
+                        </div>
+                        <textarea id="txt-planejamento" class="textarea-app" style="height: 180px;" placeholder="Digite o plano de aula...">${esc.turmas[esc.turmaAtiva] ? esc.turmas[esc.turmaAtiva].textoPlano : ''}</textarea>
+                        <button class="btn-salvar" style="background:var(--azul-premium);" onclick="salvarPlanejamentoTurma()"><i class="fa-solid fa-floppy-disk"></i> Salvar Conteúdo</button>
+                        <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Plano atualizado!</div>
+                    `;
+                }
             } 
             else if (modulo === 'alunos') {
+                if(!esc.alunos) esc.alunos = [];
                 painel.innerHTML = `
-                    <h4 style="color: #10B981; margin-bottom: 15px;"><i class="fa-solid fa-users-rectangle"></i> Lista de Alunos, Notas e Observações</h4>
-                    
+                    <h4 style="color: #10B981; margin-bottom: 15px;"><i class="fa-solid fa-address-book"></i> Controle de Alunos</h4>
                     <div class="row-aluno-add">
                         <input type="text" id="novo-aluno-nome" class="campo-busca" style="margin-bottom:0;" placeholder="Nome do Aluno">
-                        <button class="btn-salvar" style="background:#10B981; margin:0; width:auto; white-space:nowrap;" onclick="adicionarAluno()">+ Add Aluno</button>
+                        <button class="btn-salvar" style="background:#10B981; margin:0; width:auto; white-space:nowrap;" onclick="adicionarAluno()">+ Cadastrar</button>
                     </div>
-
                     <div class="tabela-wrapper">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome do Aluno</th>
-                                    <th>Trab.</th>
-                                    <th>Exame</th>
-                                    <th>Observação Individual</th>
-                                    <th>Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody id="lista-alunos-corpo">
-                                ${dadosApp.alunos.map((a, index) => `
+                            <thead><tr><th>Nome / Turma</th><th>Trab.</th><th>Exame</th><th>Observações</th><th>Ação</th></tr></thead>
+                            <tbody>
+                                ${esc.alunos.map((a, idx) => `
                                     <tr>
                                         <td><strong>${a.nome}</strong></td>
-                                        <td><input type="number" step="0.1" value="${a.notaTrabalho}" id="trab-${index}" style="width:55px; background:none; border:1px solid var(--borda); color:white; text-align:center; border-radius:4px;"></td>
-                                        <td><input type="number" step="0.1" value="${a.notaExame}" id="exame-${index}" style="width:55px; background:none; border:1px solid var(--borda); color:white; text-align:center; border-radius:4px;"></td>
-                                        <td><input type="text" value="${a.obs}" id="obs-${index}" style="width:100%; background:none; border:none; color:var(--texto-claro); font-size:0.85rem;" placeholder="Falta de atenção, evolução..."></td>
-                                        <td><button class="btn-excluir" onclick="removerAluno(${index})"><i class="fa-solid fa-trash"></i></button></td>
+                                        <td><input type="number" step="0.1" value="${a.notaTrabalho}" id="trab-${idx}" style="width:50px; background:none; border:1px solid var(--borda-glow); color:white; text-align:center; border-radius:4px;"></td>
+                                        <td><input type="number" step="0.1" value="${a.notaExame}" id="exame-${idx}" style="width:50px; background:none; border:1px solid var(--borda-glow); color:white; text-align:center; border-radius:4px;"></td>
+                                        <td><input type="text" value="${a.obs || ''}" id="obs-${idx}" style="width:100%; background:none; border:none; color:var(--texto-claro); font-size:0.85rem;" placeholder="Observação..."></td>
+                                        <td><button class="btn-excluir" onclick="removerAluno(${idx})"><i class="fa-solid fa-trash"></i></button></td>
                                     </tr>
                                 `).join('')}
                             </tbody>
                         </table>
                     </div>
-                    
-                    <button class="btn-salvar" style="background:#10B981; margin-top:15px;" onclick="salvarNotasAlunos()">
-                        <i class="fa-solid fa-floppy-disk"></i> Salvar Notas e Mudanças (Senha 26)
-                    </button>
-                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Caderneta atualizada com sucesso!</div>
+                    <button class="btn-salvar" style="background:#10B981; margin-top:15px; margin-bottom:20px;" onclick="salvarNotasAlunos()"><i class="fa-solid fa-floppy-disk"></i> Salvar Caderneta de Notas</button>
+                    <hr style="border:0; border-top:1px solid rgba(255,255,255,0.05); margin:20px 0;">
+                    <h4 style="color:#10B981; margin-bottom:10px;"><i class="fa-solid fa-book"></i> Bloco de Notas Coletivas</h4>
+                    <textarea id="txt-obs-livres" class="textarea-app" style="height: 100px;" placeholder="Anotações livres gerais ou ocorrências...">${esc.observacoesLivres || ""}</textarea>
+                    <button class="btn-salvar" style="background:var(--ciano-glow);" onclick="salvarObsLivres()"><i class="fa-solid fa-floppy-disk"></i> Salvar Bloco Livre</button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Dados salvos!</div>
                 `;
             }
             else if (modulo === 'didatico') {
                 painel.innerHTML = `
-                    <h4 style="color: #8B5CF6; margin-bottom: 15px;"><i class="fa-solid fa-brain"></i> Mapas Mentais, Textos e Slides</h4>
-                    <textarea id="txt-mapas" class="textarea-app" style="height: 150px;" placeholder="Insira roteiros de slides, links de mapas mentais ou textos de apoio descritivos...">${dadosApp.mapasTexto}</textarea>
-                    <button class="btn-salvar" style="background:#8B5CF6;" onclick="salvarDidatico()">
-                        <i class="fa-solid fa-floppy-disk"></i> Salvar Conteúdo (Senha 26)
-                    </button>
-                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Biblioteca salva!</div>
+                    <h4 style="color: var(--magenta-glow); margin-bottom: 15px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Material Didático & Slides</h4>
+                    <textarea id="txt-mapas" class="textarea-app" style="height: 160px;" placeholder="Insira roteiros, links de mapas mentais, apresentações de slides...">${esc.mapasTexto || ""}</textarea>
+                    <button class="btn-salvar" style="background:var(--magenta-glow);" onclick="salvarDidatico()"><i class="fa-solid fa-floppy-disk"></i> Salvar Materiais</button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Materiais Atualizados!</div>
                 `;
             }
             else if (modulo === 'exercicios') {
                 painel.innerHTML = `
-                    <h4 style="color: #F59E0B; margin-bottom: 15px;"><i class="fa-solid fa-file-pen"></i> Banco de Exercícios</h4>
-                    <textarea id="txt-exercicios" class="textarea-app" style="height: 150px;" placeholder="Monte ou cole aqui o seu banco de questões e avaliações completas...">${dadosApp.exerciciosTexto}</textarea>
-                    <button class="btn-salvar" style="background:#F59E0B; color: black;" onclick="salvarExercicios()">
-                        <i class="fa-solid fa-floppy-disk"></i> Salvar Exercícios (Senha 26)
-                    </button>
-                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Banco de questões atualizado!</div>
+                    <h4 style="color: #F59E0B; margin-bottom: 15px;"><i class="fa-solid fa-square-poll-horizontal"></i> Banco de Exercícios & Questões</h4>
+                    <textarea id="txt-exercicios" class="textarea-app" style="height: 160px;" placeholder="Guarde suas questões estruturadas, enunciados e avaliações aqui...">${esc.exerciciosTexto || ""}</textarea>
+                    <button class="btn-salvar" style="background:#F59E0B; color:black;" onclick="salvarExercicios()"><i class="fa-solid fa-floppy-disk"></i> Gravar Banco de Exercícios</button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Banco salvo!</div>
                 `;
             }
             else if (modulo === 'horarios') {
                 painel.innerHTML = `
-                    <h4 style="color: #EC4899; margin-bottom: 15px;"><i class="fa-solid fa-hourglass-start"></i> Grade Horária (Início e Fim por Série)</h4>
-                    <textarea id="txt-horarios" class="textarea-app" style="height: 150px;" placeholder="Exemplo de preenchimento:\n6º Ano - Matemática: 07:00 às 07:50\n7º Ano - Ciências: 07:50 às 08:40">${dadosApp.horariosTexto}</textarea>
-                    <button class="btn-salvar" style="background:#EC4899;" onclick="salvarHorarios()">
-                        <i class="fa-solid fa-floppy-disk"></i> Salvar Cronograma (Senha 26)
-                    </button>
-                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Horários salvos!</div>
+                    <h4 style="color: #EC4899; margin-bottom: 15px;"><i class="fa-solid fa-calendar-clock"></i> Grade de Horários</h4>
+                    <textarea id="txt-horarios" class="textarea-app" style="height: 160px;" placeholder="Configure sua divisão operacional de horários semanais...">${esc.horariosTexto || ""}</textarea>
+                    <button class="btn-salvar" style="background:#EC4899;" onclick="salvarHorarios()"><i class="fa-solid fa-floppy-disk"></i> Salvar Grade Horária</button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Grade fixada!</div>
                 `;
             }
             else if (modulo === 'anotacoes') {
                 painel.innerHTML = `
-                    <h4 style="color: #EF4444; margin-bottom: 15px;"><i class="fa-solid fa-note-sticky"></i> Pós-Aula / Diário de Classe</h4>
-                    <textarea id="txt-diario" class="textarea-app" style="height: 150px;" placeholder="Relate o encerramento da aula, o comportamento da classe ou tarefas cobradas para casa...">${dadosApp.diarioTexto}</textarea>
-                    <button class="btn-salvar" style="background:#EF4444;" onclick="salvarDiario()">
-                        <i class="fa-solid fa-floppy-disk"></i> Gravar Diário (Senha 26)
-                    </button>
-                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Relato de aula arquivado!</div>
+                    <h4 style="color: #EF4444; margin-bottom: 15px;"><i class="fa-solid fa-feather-pointed"></i> Diário de Classe Pós-Aula</h4>
+                    <textarea id="txt-diario" class="textarea-app" style="height: 160px;" placeholder="Relate as ocorrências operacionais e o encerramento do dia letivo...">${esc.diarioTexto || ""}</textarea>
+                    <button class="btn-salvar" style="background:#EF4444;" onclick="salvarDiario()"><i class="fa-solid fa-floppy-disk"></i> Arquivar Diário</button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Diário arquivado!</div>
                 `;
             }
         }
 
-        // Ações de salvamento protegidas por senha
-        function salvarPlanejamento() {
-            if (verificarSenha('editar')) { dadosApp.planejamentoTexto = document.getElementById('txt-planejamento').value; salvarNoAparelho(); }
+        function salvarPlanejamentoTurma() {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(esc && esc.turmas && esc.turmas[esc.turmaAtiva]) {
+                esc.turmas[esc.turmaAtiva].textoPlano = document.getElementById('txt-planejamento').value;
+                salvarNoAparelho();
+            }
         }
 
-        function salvarDiario() {
-            if (verificarSenha('editar')) { dadosApp.diarioTexto = document.getElementById('txt-diario').value; salvarNoAparelho(); }
-        }
+        function salvarDiario() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].diarioTexto = document.getElementById('txt-diario').value; salvarNoAparelho(); } }
+        function salvarDidatico() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].mapasTexto = document.getElementById('txt-mapas').value; salvarNoAparelho(); } }
+        function salvarExercicios() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].exerciciosTexto = document.getElementById('txt-exercicios').value; salvarNoAparelho(); } }
+        function salvarHorarios() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].horariosTexto = document.getElementById('txt-horarios').value; salvarNoAparelho(); } }
+        function salvarObsLivres() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].observacoesLivres = document.getElementById('txt-obs-livres').value; salvarNoAparelho(); } }
 
-        function salvarDidatico() {
-            if (verificarSenha('editar')) { dadosApp.mapasTexto = document.getElementById('txt-mapas').value; salvarNoAparelho(); }
-        }
-
-        function salvarExercicios() {
-            if (verificarSenha('editar')) { dadosApp.exerciciosTexto = document.getElementById('txt-exercicios').value; salvarNoAparelho(); }
-        }
-
-        function salvarHorarios() {
-            if (verificarSenha('editar')) { dadosApp.horariosTexto = document.getElementById('txt-horarios').value; salvarNoAparelho(); }
-        }
-
-        // Funções da lista de alunos
         function adicionarAluno() {
             const nomeInput = document.getElementById('novo-aluno-nome');
-            if (!nomeInput.value.trim()) return alert("Digite o nome do aluno!");
-            
-            if (verificarSenha('editar')) {
-                dadosApp.alunos.push({
-                    nome: nomeInput.value.trim(),
-                    notaTrabalho: 0,
-                    notaExame: 0,
-                    obs: ""
-                });
-                nomeInput.value = "";
-                salvarNoAparelho();
-                abrirModulo('alunos');
-            }
+            if (!nomeInput.value.trim()) return alert("Digite o nome!");
+            if(!dadosApp.escolas[dadosApp.escolaAtiva].alunos) dadosApp.escolas[dadosApp.escolaAtiva].alunos = [];
+            dadosApp.escolas[dadosApp.escolaAtiva].alunos.push({ nome: nomeInput.value.trim(), notaTrabalho: 0, notaExame: 0, obs: "" });
+            nomeInput.value = ""; 
+            salvarNoAparelho(); 
+            abrirModulo('alunos');
         }
 
         function salvarNotasAlunos() {
-            if (verificarSenha('editar')) {
-                dadosApp.alunos.forEach((aluno, index) => {
-                    dadosApp.alunos[index].notaTrabalho = parseFloat(document.getElementById(`trab-${index}`).value) || 0;
-                    dadosApp.alunos[index].notaExame = parseFloat(document.getElementById(`exame-${index}`).value) || 0;
-                    dadosApp.alunos[index].obs = document.getElementById(`obs-${index}`).value;
-                });
-                salvarNoAparelho();
-            }
+            const alunos = dadosApp.escolas[dadosApp.escolaAtiva].alunos;
+            alunos.forEach((a, idx) => {
+                alunos[idx].notaTrabalho = parseFloat(document.getElementById(`trab-${idx}`).value) || 0;
+                alunos[idx].notaExame = parseFloat(document.getElementById(`exame-${idx}`).value) || 0;
+                alunos[idx].obs = document.getElementById(`obs-${idx}`).value;
+            });
+            salvarNoAparelho();
         }
 
-        function removerAluno(index) {
-            if (verificarSenha('excluir')) {
-                dadosApp.alunos.splice(index, 1);
-                salvarNoAparelho();
+        function removerAluno(idx) {
+            if (verificarSenhaExclusao()) {
+                dadosApp.escolas[dadosApp.escolaAtiva].alunos.splice(idx, 1);
+                salvarNoAparelho(); 
                 abrirModulo('alunos');
+            } else {
+                alert("Senha incorreta!");
             }
         }
 
-        // Registro Automático do Service Worker para o PWA do GitHub
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js')
-            .then(() => console.log('PWA carregado com sucesso.'))
-            .catch(err => console.log('Erro PWA:', err));
+            navigator.serviceWorker.register('./sw.js').then(() => console.log('PWA ativo.'));
         }
     </script>
 </body>
