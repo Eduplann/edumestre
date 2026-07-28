@@ -47,18 +47,22 @@
         }
 
         .brand-container { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        
+        /* LOGOMARCA REDESENHADA MAIS ELEGANTE */
         .logo-emblem {
-            position: relative; width: 45px; height: 45px;
-            background: linear-gradient(135deg, var(--ciano-glow), var(--azul-premium));
-            border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+            position: relative; width: 48px; height: 48px;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            border: 1.5px solid rgba(6, 182, 212, 0.4);
+            border-radius: 14px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
         }
-        .logo-emblem i { font-size: 1.4rem; color: #fff; z-index: 2; }
+        .logo-emblem i { font-size: 1.3rem; background: linear-gradient(135deg, var(--ciano-glow), var(--magenta-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; z-index: 2; }
         .logo-emblem::after {
-            content: ''; position: absolute; inset: -2px; 
-            background: linear-gradient(135deg, var(--magenta-glow), var(--ciano-glow));
-            border-radius: 14px; z-index: 1; opacity: 0.5; filter: blur(4px);
+            content: ''; position: absolute; inset: -3px; 
+            background: linear-gradient(135deg, var(--ciano-glow), var(--azul-premium));
+            border-radius: 16px; z-index: -1; opacity: 0.3; filter: blur(6px);
         }
+
         .brand-text h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(to right, #FFF, #94A3B8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .brand-text span { font-size: 0.65rem; letter-spacing: 1.5px; color: var(--ciano-glow); font-weight: 700; display: block; text-transform: uppercase; }
 
@@ -112,7 +116,7 @@
     <div id="tela-bloqueio">
         <div class="lock-box">
             <div class="logo-emblem" style="margin: 0 auto 15px auto;">
-                <i class="fa-solid fa-lock"></i>
+                <i class="fa-solid fa-graduation-cap"></i>
             </div>
             <h2 id="lock-titulo" style="font-size: 1.2rem; margin-bottom: 5px;">Acesso Restrito</h2>
             <p id="lock-subtitulo" style="font-size: 0.75rem; color: var(--texto-mutado); margin-bottom: 20px;">Carregando sistema seguro...</p>
@@ -125,10 +129,11 @@
     <header>
         <div class="brand-container">
             <div class="logo-emblem">
-                <i class="fa-solid fa-bolt"></i>
+                <!-- Ícone de Capa de Formatura/Estudo Estilizado e Minimalista -->
+                <i class="fa-solid fa-graduation-cap"></i>
             </div>
             <div class="brand-text">
-                <h1>EduMestre Glow</h1>
+                <h1>EduMestre Pro</h1>
                 <span>Professional Suite</span>
             </div>
         </div>
