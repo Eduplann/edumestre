@@ -1,15 +1,16 @@
 {
-  "name": "EduMestre Pro",
   "short_name": "EduMestre",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#0F172A",
-  "theme_color": "#1E3A8A",
+  "name": "EduMestre Glow Pro",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2940/2940651.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": "./index.html?v=2",
+  "background_color": "#090D1A",
+  "theme_color": "#0F172A",
+  "display": "standalone",
+  "orientation": "portrait"
 }

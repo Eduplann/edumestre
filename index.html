@@ -48,7 +48,6 @@
 
         .brand-container { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         
-        /* LOGOMARCA REDESENHADA MAIS ELEGANTE */
         .logo-emblem {
             position: relative; width: 48px; height: 48px;
             background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
@@ -109,6 +108,9 @@
         .status-salvamento { font-size: 0.8rem; text-align: center; margin-top: 8px; color: #10B981; font-weight: 600; display: none; }
         
         .row-aluno-add { display: flex; gap: 10px; margin-bottom: 15px; }
+
+        .card-aula { background: var(--bg-inputs); border: 1px solid var(--borda-glow); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+        .card-aula-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -152,7 +154,7 @@
             <div class="card azul" onclick="abrirModulo('planejamento')">
                 <i class="fa-solid fa-folder-tree"></i>
                 <h4>Planos por Turma</h4>
-                <p>Conteúdos individuais separados por cada sala.</p>
+                <p>Aulas individuais separadas por cada sala.</p>
             </div>
             
             <div class="card verde" onclick="abrirModulo('alunos')">
@@ -350,7 +352,7 @@
             if(!esc || !esc.turmas || esc.turmas.length === 0) return;
             esc.turmaAtiva = parseInt(document.getElementById('select-turma-plano').value);
             salvarNoAparelho();
-            document.getElementById('txt-planejamento').value = esc.turmas[esc.turmaAtiva].textoPlano;
+            renderizarAulasTurma();
         }
 
         function adicionarNovaTurma() {
@@ -359,10 +361,72 @@
             if (!nome || !nome.trim()) return;
             const esc = dadosApp.escolas[dadosApp.escolaAtiva];
             if(!esc.turmas) esc.turmas = [];
-            esc.turmas.push({ nomeTurma: nome.trim(), textoPlano: "" });
+            esc.turmas.push({ nomeTurma: nome.trim(), aulas: [] });
             esc.turmaAtiva = esc.turmas.length - 1;
             salvarNoAparelho();
             abrirModulo('planejamento');
+        }
+
+        function adicionarAulaNaTurma() {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(!esc || !esc.turmas || esc.turmas.length === 0) return;
+            const turma = esc.turmas[esc.turmaAtiva];
+            if(!turma.aulas) turma.aulas = [];
+
+            const tituloAula = prompt("Título ou Tema da Aula (Ex: Aula 01 - Introdução):");
+            if(!tituloAula || !tituloAula.trim()) return;
+
+            turma.aulas.push({
+                titulo: tituloAula.trim(),
+                conteudo: ""
+            });
+            salvarNoAparelho();
+            renderizarAulasTurma();
+        }
+
+        function removerAulaDaTurma(indexAula) {
+            if(confirm("Deseja excluir esta aula?")) {
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                const turma = esc.turmas[esc.turmaAtiva];
+                turma.aulas.splice(indexAula, 1);
+                salvarNoAparelho();
+                renderizarAulasTurma();
+            }
+        }
+
+        function salvarTodasAulas() {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            const turma = esc.turmas[esc.turmaAtiva];
+            if(!turma || !turma.aulas) return;
+
+            turma.aulas.forEach((aula, idx) => {
+                const campo = document.getElementById(`txt-aula-${idx}`);
+                if(campo) {
+                    aula.conteudo = campo.value;
+                }
+            });
+            salvarNoAparelho();
+        }
+
+        function renderizarAulasTurma() {
+            const containerAulas = document.getElementById('container-aulas');
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            const turma = esc.turmas[esc.turmaAtiva];
+
+            if(!turma.aulas || turma.aulas.length === 0) {
+                containerAulas.innerHTML = `<p style="color: var(--texto-mutado); font-size: 0.85rem; text-align:center; padding: 20px 0;">Nenhuma aula cadastrada nesta turma ainda.</p>`;
+                return;
+            }
+
+            containerAulas.innerHTML = turma.aulas.map((aula, idx) => `
+                <div class="card-aula">
+                    <div class="card-aula-header">
+                        <strong style="color: var(--ciano-glow); font-size:0.95rem;">${aula.titulo}</strong>
+                        <button class="btn-excluir" onclick="removerAulaDaTurma(${idx})"><i class="fa-solid fa-trash"></i> Excluir</button>
+                    </div>
+                    <textarea id="txt-aula-${idx}" class="textarea-app" style="height: 100px; margin-bottom: 0;" placeholder="Planejamento e objetivos desta aula..." oninput="salvarTodasAulas()">${aula.conteudo || ''}</textarea>
+                </div>
+            `).join('');
         }
 
         function abrirModulo(modulo) {
@@ -377,23 +441,28 @@
             if (modulo === 'planejamento') {
                 if(!esc.turmas || esc.turmas.length === 0) {
                     painel.innerHTML = `
-                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planejamento por Sala</h4>
+                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planejamento por Aula</h4>
                         <p style="color: var(--texto-mutado); font-size: 0.85rem; margin-bottom: 15px;">Nenhuma sala ou turma criada nesta escola.</p>
                         <button class="btn-salvar" style="background:var(--azul-premium); width:auto;" onclick="adicionarNovaTurma()">+ Criar Primeira Sala</button>
                     `;
                 } else {
                     painel.innerHTML = `
-                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planejamento por Sala</h4>
+                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planejamento por Aula</h4>
                         <div class="row-aluno-add" style="margin-bottom: 15px;">
                             <select id="select-turma-plano" class="campo-busca" style="margin-bottom:0;" onchange="mudarTurmaAtiva()">
                                 ${esc.turmas.map((t, i) => `<option value="${i}" ${esc.turmaAtiva == i ? 'selected' : ''}>${t.nomeTurma}</option>`).join('')}
                             </select>
                             <button class="btn-salvar" style="background:var(--azul-premium); margin:0; width:auto; white-space:nowrap;" onclick="adicionarNovaTurma()">+ Criar Sala</button>
                         </div>
-                        <textarea id="txt-planejamento" class="textarea-app" style="height: 180px;" placeholder="Digite o plano de aula...">${esc.turmas[esc.turmaAtiva] ? esc.turmas[esc.turmaAtiva].textoPlano : ''}</textarea>
-                        <button class="btn-salvar" style="background:var(--azul-premium);" onclick="salvarPlanejamentoTurma()"><i class="fa-solid fa-floppy-disk"></i> Salvar Conteúdo</button>
-                        <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Plano atualizado!</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span style="font-size: 0.85rem; color: var(--texto-mutado);">Aulas cadastradas para esta turma:</span>
+                            <button class="btn-salvar" style="background:var(--ciano-glow); color:black; margin:0; width:auto; font-size:0.8rem; padding: 8px 12px;" onclick="adicionarAulaNaTurma()">+ Adicionar Nova Aula</button>
+                        </div>
+                        <div id="container-aulas"></div>
+                        <button class="btn-salvar" style="background:var(--azul-premium); margin-top: 15px;" onclick="salvarTodasAulas()"><i class="fa-solid fa-floppy-disk"></i> Salvar Alterações</button>
+                        <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Planejamento atualizado!</div>
                     `;
+                    renderizarAulasTurma();
                 }
             } 
             else if (modulo === 'alunos') {
@@ -467,14 +536,6 @@
                     <button class="btn-salvar" style="background:#6366F1;" onclick="salvarReunioes()"><i class="fa-solid fa-floppy-disk"></i> Salvar Reuniões</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Reunião salva!</div>
                 `;
-            }
-        }
-
-        function salvarPlanejamentoTurma() {
-            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
-            if(esc && esc.turmas && esc.turmas[esc.turmaAtiva]) {
-                esc.turmas[esc.turmaAtiva].textoPlano = document.getElementById('txt-planejamento').value;
-                salvarNoAparelho();
             }
         }
 

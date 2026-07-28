@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Gradiente de Fundo Sofisticado -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#131C33" />
+      <stop offset="100%" stop-color="#090D1A" />
+    </linearGradient>
+
+    <!-- Gradiente de Brilho do Emblema -->
+    <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#D946EF" />
+    </linearGradient>
+
+    <!-- Sombra Elegante -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Fundo com cantos arredondados padrão de aplicativos modernos (iOS / Android) -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <!-- Borda Interna Sutil com Glow -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="none" stroke="url(#neonGrad)" stroke-width="4" opacity="0.35" />
+
+  <!-- Símbolo Central (Capelo de Formatura / Educação) -->
+  <g transform="translate(0, 15)" filter="url(#glow)">
+    <!-- Chapéu / Capelo -->
+    <path d="M256 120 L416 192 L256 264 L96 192 Z" fill="url(#neonGrad)" />
+    <!-- Base da Toca -->
+    <path d="M160 238 L160 310 C160 355 204 380 256 380 C308 380 352 355 352 310 L352 238" fill="none" stroke="url(#neonGrad)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Pingente / tassel -->
+    <path d="M370 210 L370 290 C370 305 385 315 395 315" fill="none" stroke="#06B6D4" stroke-width="10" stroke-linecap="round" />
+    <circle cx="395" cy="320" r="8" fill="#D946EF" />
+  </g>
+</svg>
