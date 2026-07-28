@@ -116,6 +116,10 @@
         .menu-opcoes-plano { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
         .btn-modelo { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--ciano-glow); color: var(--ciano-glow); font-size: 0.75rem; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .btn-modelo:hover { background: var(--ciano-glow); color: #000; }
+
+        .tabs-planejamento { display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px; }
+        .tab-btn { flex: 1; background: none; border: none; color: var(--texto-mutado); padding: 8px 10px; font-size: 0.8rem; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .tab-btn.ativo { background: var(--azul-premium); color: white; }
     </style>
 </head>
 <body>
@@ -159,7 +163,7 @@
             <div class="card azul" onclick="abrirModulo('planejamento')">
                 <i class="fa-solid fa-folder-tree"></i>
                 <h4>Planos por Turma</h4>
-                <p>Aulas individuais separadas por cada sala.</p>
+                <p>Planos mensais, semestrais, anuais e aulas.</p>
             </div>
             
             <div class="card verde" onclick="abrirModulo('alunos')">
@@ -313,6 +317,7 @@
             dadosApp.escolas.push({
                 nome: nome.trim(),
                 diarioTexto: "", mapasTexto: "", exerciciosTexto: "", horariosTexto: "", observacoesLivres: "", reunioesTexto: "",
+                gradeHorarios: { segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" },
                 turmaAtiva: 0,
                 turmas: [], 
                 alunos: []
@@ -357,7 +362,7 @@
             if(!esc || !esc.turmas || esc.turmas.length === 0) return;
             esc.turmaAtiva = parseInt(document.getElementById('select-turma-plano').value);
             salvarNoAparelho();
-            renderizarAulasTurma();
+            renderizarConteudoTurmaAtiva();
         }
 
         function adicionarNovaTurma() {
@@ -366,10 +371,32 @@
             if (!nome || !nome.trim()) return;
             const esc = dadosApp.escolas[dadosApp.escolaAtiva];
             if(!esc.turmas) esc.turmas = [];
-            esc.turmas.push({ nomeTurma: nome.trim(), aulas: [] });
+            esc.turmas.push({ 
+                nomeTurma: nome.trim(), 
+                planoMensal: "", 
+                planoSemestral: "", 
+                planoAnual: "", 
+                aulas: [] 
+            });
             esc.turmaAtiva = esc.turmas.length - 1;
             salvarNoAparelho();
             abrirModulo('planejamento');
+        }
+
+        function mudarAbaPlanejamento( aba ) {
+            ['mensal', 'semestral', 'anual', 'aulas'].forEach(tipo => {
+                const el = document.getElementById(`bloco-plano-${tipo}`);
+                const btn = document.getElementById(`tab-${tipo}`);
+                if(el && btn) {
+                    if(tipo === aba) {
+                        el.style.display = 'block';
+                        btn.classList.add('ativo');
+                    } else {
+                        el.style.display = 'none';
+                        btn.classList.remove('ativo');
+                    }
+                }
+            });
         }
 
         function adicionarAulaNaTurma() {
@@ -401,29 +428,39 @@
 
         function inserirModeloPlanejamento(indexAula, tipo) {
             const modelos = {
-                gamificacao: "Missão / Gamificação:\n1. Cenário: Desafio inicial contextualizado.\n2. Equipes: Divisão em clãs com papéis definidos.\n3. Execução: Tarefas baseadas em fases e XP.\n4. Fechamento: Pontuação e feedback coletivo.",
-                estacoes: "Estação de Rotação (Metodologia Ativa):\n1. Estação Digital: Pesquisa guiada por dispositivos móveis.\n2. Estação Prática: Resolução de problemas ou mapas mentais.\n3. Estação do Professor: Intervenção direta e debate.\n4. Fechamento: Síntese rápida da turma.",
-                quiz: "Quiz Show / Competição:\n1. Aquecimento: Recapitulação rápida de 5 minutos.\n2. Competição: Batalha de perguntas em equipes.\n3. Pontuação: Premiação simbólica no diário.\n4. Conclusão: Esclarecimento de dúvidas críticas."
+                debate: "Roteiro de Debate / Discussão:\n1. Contextualização: Apresentação do problema ou tema central.\n2. Divisão de Grupos: Atribuição de pontos de vista.\n3. Plenária: Argumentação e contra-argumentação.\n4. Conclusão: Síntese dos aprendizados obtidos.",
+                pratica: "Atividade Prática / Investigativa:\n1. Desafio: Proposta da tarefa experimental ou de campo.\n2. Execução: Desenvolvimento autônomo com suporte.\n3. Compartilhamento: Exposição dos resultados.\n4. Fechamento: Avaliação coletiva.",
+                intervencao: "Exposição Dialogada e Síntese:\n1. Aquecimento: Recuperação de conceitos prévios.\n2. Exposição: Apresentação dos conceitos principais.\n3. Aplicação: Exercício guiado em conjunto.\n4. Encerramento: Esclarecimento de dúvidas finais."
             };
 
             const campo = document.getElementById(`txt-aula-${indexAula}`);
             if(campo && modelos[tipo]) {
                 campo.value = campo.value ? campo.value + "\n\n" + modelos[tipo] : modelos[tipo];
-                salvarTodasAulas();
+                salvarDadosTurma();
             }
         }
 
-        function salvarTodasAulas() {
+        function salvarDadosTurma() {
             const esc = dadosApp.escolas[dadosApp.escolaAtiva];
             const turma = esc.turmas[esc.turmaAtiva];
-            if(!turma || !turma.aulas) return;
+            if(!turma) return;
 
-            turma.aulas.forEach((aula, idx) => {
-                const campo = document.getElementById(`txt-aula-${idx}`);
-                if(campo) {
-                    aula.conteudo = campo.value;
-                }
-            });
+            const tMensal = document.getElementById('txt-turma-mensal');
+            const tSemestral = document.getElementById('txt-turma-semestral');
+            const tAnual = document.getElementById('txt-turma-anual');
+
+            if(tMensal) turma.planoMensal = tMensal.value;
+            if(tSemestral) turma.planoSemestral = tSemestral.value;
+            if(tAnual) turma.planoAnual = tAnual.value;
+
+            if(turma.aulas) {
+                turma.aulas.forEach((aula, idx) => {
+                    const campo = document.getElementById(`txt-aula-${idx}`);
+                    if(campo) {
+                        aula.conteudo = campo.value;
+                    }
+                });
+            }
             salvarNoAparelho();
         }
 
@@ -444,14 +481,25 @@
                         <button class="btn-excluir" onclick="removerAulaDaTurma(${idx})"><i class="fa-solid fa-trash"></i> Excluir</button>
                     </div>
                     <div class="menu-opcoes-plano">
-                        <span style="font-size:0.75rem; color:var(--texto-mutado); align-self:center;">Inserir Opção:</span>
-                        <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'gamificacao')">+ Gamificação</button>
-                        <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'estacoes')">+ Estações</button>
-                        <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'quiz')">+ Quiz</button>
+                        <span style="font-size:0.75rem; color:var(--texto-mutado); align-self:center;">Inserir Modelo:</span>
+                        <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'debate')">+ Debate</button>
+                        <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'pratica')">+ Prática</button>
+                        <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'intervencao')">+ Exposição</button>
                     </div>
-                    <textarea id="txt-aula-${idx}" class="textarea-app" style="height: 120px; margin-bottom: 0;" placeholder="Planejamento e objetivos desta aula..." oninput="salvarTodasAulas()">${aula.conteudo || ''}</textarea>
+                    <textarea id="txt-aula-${idx}" class="textarea-app" style="height: 120px; margin-bottom: 0;" placeholder="Planejamento e objetivos desta aula..." oninput="salvarDadosTurma()">${aula.conteudo || ''}</textarea>
                 </div>
             `).join('');
+        }
+
+        function renderizarConteudoTurmaAtiva() {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            const turma = esc.turmas[esc.turmaAtiva];
+            if(!turma) return;
+
+            document.getElementById('txt-turma-mensal').value = turma.planoMensal || "";
+            document.getElementById('txt-turma-semestral').value = turma.planoSemestral || "";
+            document.getElementById('txt-turma-anual').value = turma.planoAnual || "";
+            renderizarAulasTurma();
         }
 
         function abrirModulo(modulo) {
@@ -466,34 +514,60 @@
             if (modulo === 'planejamento') {
                 if(!esc.turmas || esc.turmas.length === 0) {
                     painel.innerHTML = `
-                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planejamento por Aula</h4>
+                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planos por Turma</h4>
                         <p style="color: var(--texto-mutado); font-size: 0.85rem; margin-bottom: 15px;">Nenhuma sala ou turma criada nesta escola.</p>
                         <button class="btn-salvar" style="background:var(--azul-premium); width:auto;" onclick="adicionarNovaTurma()">+ Criar Primeira Sala</button>
                     `;
                 } else {
                     painel.innerHTML = `
-                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planejamento por Aula</h4>
+                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planos por Turma</h4>
                         <div class="row-aluno-add" style="margin-bottom: 15px;">
                             <select id="select-turma-plano" class="campo-busca" style="margin-bottom:0;" onchange="mudarTurmaAtiva()">
                                 ${esc.turmas.map((t, i) => `<option value="${i}" ${esc.turmaAtiva == i ? 'selected' : ''}>${t.nomeTurma}</option>`).join('')}
                             </select>
                             <button class="btn-salvar" style="background:var(--azul-premium); margin:0; width:auto; white-space:nowrap;" onclick="adicionarNovaTurma()">+ Criar Sala</button>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <span style="font-size: 0.85rem; color: var(--texto-mutado);">Aulas cadastradas para esta turma:</span>
-                            <button class="btn-salvar" style="background:var(--ciano-glow); color:black; margin:0; width:auto; font-size:0.8rem; padding: 8px 12px;" onclick="adicionarAulaNaTurma()">+ Adicionar Nova Aula</button>
+
+                        <div class="tabs-planejamento">
+                            <button class="tab-btn ativo" id="tab-mensal" onclick="mudarAbaPlanejamento('mensal')">Mensal</button>
+                            <button class="tab-btn" id="tab-semestral" onclick="mudarAbaPlanejamento('semestral')">Semestral</button>
+                            <button class="tab-btn" id="tab-anual" onclick="mudarAbaPlanejamento('anual')">Anual</button>
+                            <button class="tab-btn" id="tab-aulas" onclick="mudarAbaPlanejamento('aulas')">Aulas</button>
                         </div>
-                        <div id="container-aulas"></div>
-                        <button class="btn-salvar" style="background:var(--azul-premium); margin-top: 15px;" onclick="salvarTodasAulas()"><i class="fa-solid fa-floppy-disk"></i> Salvar Alterações</button>
+
+                        <div id="bloco-plano-mensal">
+                            <label style="font-size:0.8rem; color:var(--ciano-glow); font-weight:600; display:block; margin-bottom:5px;">Planejamento Mensal</label>
+                            <textarea id="txt-turma-mensal" class="textarea-app" style="height: 150px;" placeholder="Objetivos e metas para o mês nesta turma..." oninput="salvarDadosTurma()"></textarea>
+                        </div>
+
+                        <div id="bloco-plano-semestral" style="display: none;">
+                            <label style="font-size:0.8rem; color:var(--ciano-glow); font-weight:600; display:block; margin-bottom:5px;">Planejamento Semestral</label>
+                            <textarea id="txt-turma-semestral" class="textarea-app" style="height: 150px;" placeholder="Diretrizes gerais para o semestre..." oninput="salvarDadosTurma()"></textarea>
+                        </div>
+
+                        <div id="bloco-plano-anual" style="display: none;">
+                            <label style="font-size:0.8rem; color:var(--ciano-glow); font-weight:600; display:block; margin-bottom:5px;">Planejamento Anual</label>
+                            <textarea id="txt-turma-anual" class="textarea-app" style="height: 150px;" placeholder="Ementa e metas gerais do ano letivo..." oninput="salvarDadosTurma()"></textarea>
+                        </div>
+
+                        <div id="bloco-plano-aulas" style="display: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <span style="font-size: 0.85rem; color: var(--texto-mutado);">Aulas cadastradas:</span>
+                                <button class="btn-salvar" style="background:var(--ciano-glow); color:black; margin:0; width:auto; font-size:0.8rem; padding: 8px 12px;" onclick="adicionarAulaNaTurma()">+ Adicionar Nova Aula</button>
+                            </div>
+                            <div id="container-aulas"></div>
+                        </div>
+
+                        <button class="btn-salvar" style="background:var(--azul-premium); margin-top: 15px;" onclick="salvarDadosTurma()"><i class="fa-solid fa-floppy-disk"></i> Salvar Alterações</button>
                         <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Planejamento atualizado!</div>
                     `;
-                    renderizarAulasTurma();
+                    renderizarConteudoTurmaAtiva();
                 }
             } 
             else if (modulo === 'alunos') {
                 if(!esc.alunos) esc.alunos = [];
                 painel.innerHTML = `
-                    <h4 style="color: #10B981; margin-bottom: 15px;"><i class="fa-solid fa-address-book"></i> Controle de Alunos</h4>
+                    <h4 style="color: #10B981; margin-bottom: 15px;"><i class="fa-solid fa-address-book"></i> Alunos & Notas</h4>
                     <div class="row-aluno-add">
                         <input type="text" id="novo-aluno-nome" class="campo-busca" style="margin-bottom:0;" placeholder="Nome do Aluno">
                         <button class="btn-salvar" style="background:#10B981; margin:0; width:auto; white-space:nowrap;" onclick="adicionarAluno()">+ Cadastrar</button>
@@ -524,7 +598,7 @@
             }
             else if (modulo === 'didatico') {
                 painel.innerHTML = `
-                    <h4 style="color: var(--magenta-glow); margin-bottom: 15px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Material Didático & Slides</h4>
+                    <h4 style="color: var(--magenta-glow); margin-bottom: 15px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Mapas & Apoio</h4>
                     <textarea id="txt-mapas" class="textarea-app" style="height: 160px;" placeholder="Insira roteiros, links de mapas mentais, apresentações de slides...">${esc.mapasTexto || ""}</textarea>
                     <button class="btn-salvar" style="background:var(--magenta-glow);" onclick="salvarDidatico()"><i class="fa-solid fa-floppy-disk"></i> Salvar Materiais</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Materiais Atualizados!</div>
@@ -532,23 +606,49 @@
             }
             else if (modulo === 'exercicios') {
                 painel.innerHTML = `
-                    <h4 style="color: #F59E0B; margin-bottom: 15px;"><i class="fa-solid fa-square-poll-horizontal"></i> Banco de Exercícios & Questões</h4>
+                    <h4 style="color: #F59E0B; margin-bottom: 15px;"><i class="fa-solid fa-square-poll-horizontal"></i> Banco de Questões</h4>
                     <textarea id="txt-exercicios" class="textarea-app" style="height: 160px;" placeholder="Guarde suas questões estruturadas, enunciados e avaliações aqui...">${esc.exerciciosTexto || ""}</textarea>
                     <button class="btn-salvar" style="background:#F59E0B; color:black;" onclick="salvarExercicios()"><i class="fa-solid fa-floppy-disk"></i> Gravar Banco de Exercícios</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Banco salvo!</div>
                 `;
             }
             else if (modulo === 'horarios') {
+                if(!esc.gradeHorarios) {
+                    esc.gradeHorarios = { segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" };
+                }
+                const g = esc.gradeHorarios;
                 painel.innerHTML = `
-                    <h4 style="color: #EC4899; margin-bottom: 15px;"><i class="fa-solid fa-calendar-clock"></i> Grade de Horários</h4>
-                    <textarea id="txt-horarios" class="textarea-app" style="height: 160px;" placeholder="Configure sua divisão operacional de horários semanais...">${esc.horariosTexto || ""}</textarea>
-                    <button class="btn-salvar" style="background:#EC4899;" onclick="salvarHorarios()"><i class="fa-solid fa-floppy-disk"></i> Salvar Grade Horária</button>
+                    <h4 style="color: #EC4899; margin-bottom: 15px;"><i class="fa-solid fa-calendar-clock"></i> Grade Horária (Segunda a Domingo)</h4>
+                    <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 15px;">Defina livremente os horários e atividades para cada dia da semana:</p>
+                    
+                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Segunda-feira</label>
+                    <textarea id="gh-segunda" class="textarea-app" style="height: 70px;" placeholder="Ex: 08:00 - Aula X / 14:00 - Reunião">${g.segunda || ""}</textarea>
+                    
+                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Terça-feira</label>
+                    <textarea id="gh-terca" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.terca || ""}</textarea>
+                    
+                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Quarta-feira</label>
+                    <textarea id="gh-quarta" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.quarta || ""}</textarea>
+                    
+                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Quinta-feira</label>
+                    <textarea id="gh-quinta" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.quinta || ""}</textarea>
+                    
+                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Sexta-feira</label>
+                    <textarea id="gh-sexta" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.sexta || ""}</textarea>
+                    
+                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Sábado</label>
+                    <textarea id="gh-sabado" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.sabado || ""}</textarea>
+                    
+                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Domingo</label>
+                    <textarea id="gh-domingo" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.domingo || ""}</textarea>
+
+                    <button class="btn-salvar" style="background:#EC4899;" onclick="salvarGradeHorarios()"><i class="fa-solid fa-floppy-disk"></i> Salvar Grade Horária</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Grade fixada!</div>
                 `;
             }
             else if (modulo === 'anotacoes') {
                 painel.innerHTML = `
-                    <h4 style="color: #EF4444; margin-bottom: 15px;"><i class="fa-solid fa-feather-pointed"></i> Diário de Classe Pós-Aula</h4>
+                    <h4 style="color: #EF4444; margin-bottom: 15px;"><i class="fa-solid fa-feather-pointed"></i> Diário de Classe</h4>
                     <textarea id="txt-diario" class="textarea-app" style="height: 160px;" placeholder="Relate as ocorrências operacionais e o encerramento do dia letivo...">${esc.diarioTexto || ""}</textarea>
                     <button class="btn-salvar" style="background:#EF4444;" onclick="salvarDiario()"><i class="fa-solid fa-floppy-disk"></i> Arquivar Diário</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Diário arquivado!</div>
@@ -556,7 +656,7 @@
             }
             else if (modulo === 'reunioes') {
                 painel.innerHTML = `
-                    <h4 style="color: #6366F1; margin-bottom: 15px;"><i class="fa-solid fa-handshake-angle"></i> Anotações de Reuniões Pedagógicas</h4>
+                    <h4 style="color: #6366F1; margin-bottom: 15px;"><i class="fa-solid fa-handshake-angle"></i> Reuniões Pedagógicas</h4>
                     <textarea id="txt-reunioes" class="textarea-app" style="height: 160px;" placeholder="Registre pautas, orientações da coordenação, acordos e atas de reuniões desta escola...">${esc.reunioesTexto || ""}</textarea>
                     <button class="btn-salvar" style="background:#6366F1;" onclick="salvarReunioes()"><i class="fa-solid fa-floppy-disk"></i> Salvar Reuniões</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Reunião salva!</div>
@@ -567,7 +667,22 @@
         function salvarDiario() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].diarioTexto = document.getElementById('txt-diario').value; salvarNoAparelho(); } }
         function salvarDidatico() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].mapasTexto = document.getElementById('txt-mapas').value; salvarNoAparelho(); } }
         function salvarExercicios() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].exerciciosTexto = document.getElementById('txt-exercicios').value; salvarNoAparelho(); } }
-        function salvarHorarios() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].horariosTexto = document.getElementById('txt-horarios').value; salvarNoAparelho(); } }
+        
+        function salvarGradeHorarios() {
+            if(dadosApp.escolas[dadosApp.escolaAtiva]) {
+                dadosApp.escolas[dadosApp.escolaAtiva].gradeHorarios = {
+                    segunda: document.getElementById('gh-segunda').value,
+                    terca: document.getElementById('gh-terca').value,
+                    quarta: document.getElementById('gh-quarta').value,
+                    quinta: document.getElementById('gh-quinta').value,
+                    sexta: document.getElementById('gh-sexta').value,
+                    sabado: document.getElementById('gh-sabado').value,
+                    domingo: document.getElementById('gh-domingo').value
+                };
+                salvarNoAparelho();
+            }
+        }
+
         function salvarObsLivres() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].observacoesLivres = document.getElementById('txt-obs-livres').value; salvarNoAparelho(); } }
         function salvarReunioes() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].reunioesTexto = document.getElementById('txt-reunioes').value; salvarNoAparelho(); } }
 
