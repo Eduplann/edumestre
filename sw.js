@@ -1,36 +1,41 @@
-const CACHE_NAME = 'edumestre-glow-cache-v2';
-const ASSETS = [
-  './',
-  './index.html?v=2',
-  './manifest.json?v=2'
+const CACHE_NAME = 'edumestre-v2';
+const assetsToCache = [
+  './index.html',
+  './manifest.json',
+  './icon.svg'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
+// Instalação do Service Worker e cache dos arquivos básicos
+self.addEventListener('install', (event) => {
+  event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    }).then(() => self.skipWaiting())
+      return cache.addAll(assetsToCache);
+    })
   );
+  self.skipWaiting();
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
+// Ativação e limpeza de caches antigos
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
-            return caches.delete(key); // Deleta versões velhas automaticamente
+            return caches.delete(key);
           }
         })
       );
-    }).then(() => self.clients.claim())
+    })
   );
+  self.clients.claim();
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    fetch(e.request).catch(() => {
-      return caches.match(e.request);
+// Interceptação de requisições para funcionamento offline
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
     })
   );
 });
