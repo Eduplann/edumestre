@@ -89,6 +89,7 @@
         .card.laranja i { color: #F59E0B; text-shadow: 0 0 10px rgba(245,158,11,0.4); }
         .card.rosa i { color: #EC4899; text-shadow: 0 0 10px rgba(236,72,153,0.4); }
         .card.vermelho i { color: #EF4444; text-shadow: 0 0 10px rgba(239,68,68,0.4); }
+        .card.indigo i { color: #6366F1; text-shadow: 0 0 10px rgba(99,102,241,0.4); }
 
         .painel-conteudo { background-color: var(--bg-cards); border-radius: 16px; padding: 22px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .campo-busca, .textarea-app { width: 100%; padding: 12px 14px; background-color: var(--bg-inputs); border: 1px solid var(--borda-glow); border-radius: 10px; color: #fff; margin-bottom: 15px; font-size: 0.9rem; }
@@ -178,6 +179,12 @@
                 <i class="fa-solid fa-feather-pointed"></i>
                 <h4>Diário de Classe</h4>
                 <p>Relatos do encerramento das atividades.</p>
+            </div>
+
+            <div class="card indigo" onclick="abrirModulo('reunioes')">
+                <i class="fa-solid fa-handshake-angle"></i>
+                <h4>Reuniões Pedagógicas</h4>
+                <p>Anotações de encontros, pautas e alinhamentos.</p>
             </div>
         </div>
 
@@ -294,7 +301,7 @@
 
             dadosApp.escolas.push({
                 nome: nome.trim(),
-                diarioTexto: "", mapasTexto: "", exerciciosTexto: "", horariosTexto: "", observacoesLivres: "",
+                diarioTexto: "", mapasTexto: "", exerciciosTexto: "", horariosTexto: "", observacoesLivres: "", reunioesTexto: "",
                 turmaAtiva: 0,
                 turmas: [], 
                 alunos: []
@@ -449,6 +456,14 @@
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Diário arquivado!</div>
                 `;
             }
+            else if (modulo === 'reunioes') {
+                painel.innerHTML = `
+                    <h4 style="color: #6366F1; margin-bottom: 15px;"><i class="fa-solid fa-handshake-angle"></i> Anotações de Reuniões Pedagógicas</h4>
+                    <textarea id="txt-reunioes" class="textarea-app" style="height: 160px;" placeholder="Registre pautas, orientações da coordenação, acordos e atas de reuniões desta escola...">${esc.reunioesTexto || ""}</textarea>
+                    <button class="btn-salvar" style="background:#6366F1;" onclick="salvarReunioes()"><i class="fa-solid fa-floppy-disk"></i> Salvar Reuniões</button>
+                    <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Reunião salva!</div>
+                `;
+            }
         }
 
         function salvarPlanejamentoTurma() {
@@ -464,6 +479,7 @@
         function salvarExercicios() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].exerciciosTexto = document.getElementById('txt-exercicios').value; salvarNoAparelho(); } }
         function salvarHorarios() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].horariosTexto = document.getElementById('txt-horarios').value; salvarNoAparelho(); } }
         function salvarObsLivres() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].observacoesLivres = document.getElementById('txt-obs-livres').value; salvarNoAparelho(); } }
+        function salvarReunioes() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].reunioesTexto = document.getElementById('txt-reunioes').value; salvarNoAparelho(); } }
 
         function adicionarAluno() {
             const nomeInput = document.getElementById('novo-aluno-nome');
@@ -498,7 +514,6 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js?v=2').then((reg) => {
                 console.log('PWA v2 ativo.');
-                // Força atualização em segundo plano se houver código novo
                 reg.update();
             });
         }
