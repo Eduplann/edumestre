@@ -7,7 +7,8 @@
     <meta name="theme-color" content="#0F172A">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="./manifest.json?v=2">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/svg+xml" href="./icon.svg">
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -111,6 +112,10 @@
 
         .card-aula { background: var(--bg-inputs); border: 1px solid var(--borda-glow); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
         .card-aula-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        
+        .menu-opcoes-plano { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+        .btn-modelo { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--ciano-glow); color: var(--ciano-glow); font-size: 0.75rem; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-modelo:hover { background: var(--ciano-glow); color: #000; }
     </style>
 </head>
 <body>
@@ -394,6 +399,20 @@
             }
         }
 
+        function inserirModeloPlanejamento(indexAula, tipo) {
+            const modelos = {
+                gamificacao: "Missão / Gamificação:\n1. Cenário: Desafio inicial contextualizado.\n2. Equipes: Divisão em clãs com papéis definidos.\n3. Execução: Tarefas baseadas em fases e XP.\n4. Fechamento: Pontuação e feedback coletivo.",
+                estacoes: "Estação de Rotação (Metodologia Ativa):\n1. Estação Digital: Pesquisa guiada por dispositivos móveis.\n2. Estação Prática: Resolução de problemas ou mapas mentais.\n3. Estação do Professor: Intervenção direta e debate.\n4. Fechamento: Síntese rápida da turma.",
+                quiz: "Quiz Show / Competição:\n1. Aquecimento: Recapitulação rápida de 5 minutos.\n2. Competição: Batalha de perguntas em equipes.\n3. Pontuação: Premiação simbólica no diário.\n4. Conclusão: Esclarecimento de dúvidas críticas."
+            };
+
+            const campo = document.getElementById(`txt-aula-${indexAula}`);
+            if(campo && modelos[tipo]) {
+                campo.value = campo.value ? campo.value + "\n\n" + modelos[tipo] : modelos[tipo];
+                salvarTodasAulas();
+            }
+        }
+
         function salvarTodasAulas() {
             const esc = dadosApp.escolas[dadosApp.escolaAtiva];
             const turma = esc.turmas[esc.turmaAtiva];
@@ -424,7 +443,13 @@
                         <strong style="color: var(--ciano-glow); font-size:0.95rem;">${aula.titulo}</strong>
                         <button class="btn-excluir" onclick="removerAulaDaTurma(${idx})"><i class="fa-solid fa-trash"></i> Excluir</button>
                     </div>
-                    <textarea id="txt-aula-${idx}" class="textarea-app" style="height: 100px; margin-bottom: 0;" placeholder="Planejamento e objetivos desta aula..." oninput="salvarTodasAulas()">${aula.conteudo || ''}</textarea>
+                    <div class="menu-opcoes-plano">
+                        <span style="font-size:0.75rem; color:var(--texto-mutado); align-self:center;">Inserir Opção:</span>
+                        <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'gamificacao')">+ Gamificação</button>
+                        <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'estacoes')">+ Estações</button>
+                        <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'quiz')">+ Quiz</button>
+                    </div>
+                    <textarea id="txt-aula-${idx}" class="textarea-app" style="height: 120px; margin-bottom: 0;" placeholder="Planejamento e objetivos desta aula..." oninput="salvarTodasAulas()">${aula.conteudo || ''}</textarea>
                 </div>
             `).join('');
         }
@@ -577,9 +602,8 @@
         }
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js?v=2').then((reg) => {
-                console.log('PWA v2 ativo.');
-                reg.update();
+            navigator.serviceWorker.register('./sw.js').then((reg) => {
+                console.log('Service Worker ativo.');
             });
         }
     </script>

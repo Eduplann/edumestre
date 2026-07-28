@@ -1,16 +1,16 @@
 {
+  "name": "EduMestre Pro",
   "short_name": "EduMestre",
-  "name": "EduMestre Glow Pro",
-  "icons": [
-    {
-      "src": "icon.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": "./index.html?v=2",
+  "start_url": "./index.html",
+  "display": "standalone",
   "background_color": "#090D1A",
   "theme_color": "#0F172A",
-  "display": "standalone",
-  "orientation": "portrait"
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
