@@ -67,7 +67,7 @@
         .brand-text span { font-size: 0.65rem; letter-spacing: 1.5px; color: var(--ciano-glow); font-weight: 700; display: block; text-transform: uppercase; }
 
         .seletor-escola-container {
-            display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.03);
+            display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.03);
             padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .seletor-escola-container select { flex: 1; background: none; border: none; color: #fff; font-size: 0.95rem; font-weight: 600; outline: none; cursor: pointer; }
@@ -151,6 +151,7 @@
         <div class="seletor-escola-container">
             <select id="select-escola" onchange="mudarEscolaAtiva()">
                 </select>
+            <button onclick="editarEscolaAtiva()" style="background: none; border: none; color: #F59E0B; font-size: 1.0rem; cursor: pointer;" title="Editar Nome da Escola Atual"><i class="fa-solid fa-pen-to-square"></i></button>
             <button onclick="adicionarNovaEscola()" style="background: none; border: none; color: var(--ciano-glow); font-size: 1.1rem; cursor: pointer;" title="Adicionar Escola"><i class="fa-solid fa-circle-plus"></i></button>
             <button onclick="excluirEscolaAtiva()" style="background: none; border: none; color: #EF4444; font-size: 1.1rem; cursor: pointer;" title="Excluir Escola Atual"><i class="fa-solid fa-trash-can"></i></button>
         </div>
@@ -228,9 +229,21 @@
         }
 
         function limparTudoEForcarReset() {
-            if(confirm("Deseja apagar totalmente a memória local do app para recomeçar do zero?")) {
-                localStorage.clear();
-                window.location.reload();
+            if (!senhaMaster) {
+                if(confirm("Deseja apagar totalmente a memória local do app para recomeçar do zero?")) {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+                return;
+            }
+
+            if (verificarSenhaExclusao()) {
+                if(confirm("Deseja apagar totalmente a memória local do app para recomeçar do zero?")) {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+            } else {
+                alert("Senha Master incorreta!");
             }
         }
 
@@ -256,7 +269,7 @@
         }
 
         function verificarSenhaExclusao() {
-            const checa = prompt("Digite sua Senha Master para confirmar a exclusão:");
+            const checa = prompt("Digite sua Senha Master para confirmar:");
             return checa === senhaMaster;
         }
 
@@ -328,29 +341,43 @@
             abrirModulo(moduloAtivoGlobal);
         }
 
+        function editarEscolaAtiva() {
+            if (!dadosApp.escolas || dadosApp.escolas.length === 0) return alert("Nenhuma escola selecionada!");
+            const escAtual = dadosApp.escolas[dadosApp.escolaAtiva];
+            
+            if (verificarSenhaExclusao()) {
+                const novoNome = prompt("Editar nome da escola:", escAtual.nome);
+                if (novoNome && novoNome.trim()) {
+                    escAtual.nome = novoNome.trim();
+                    salvarNoAparelho();
+                    atualizarSeletorEscolas();
+                    abrirModulo(moduloAtivoGlobal);
+                }
+            } else {
+                alert("Senha Master incorreta!");
+            }
+        }
+
         function excluirEscolaAtiva() {
             if (!dadosApp.escolas || dadosApp.escolas.length === 0) {
                 alert("Nenhuma escola para excluir!");
                 return;
             }
-            
             const escAtual = dadosApp.escolas[dadosApp.escolaAtiva];
             if(!escAtual) return;
-            
-            const confirmacaoGeral = confirm(`Deseja apagar permanentemente a escola "${escAtual.nome}"?`);
-            if (!confirmacaoGeral) return;
 
             if (verificarSenhaExclusao()) {
-                dadosApp.escolas.splice(dadosApp.escolaAtiva, 1);
-                dadosApp.escolaAtiva = 0; 
-                
-                salvarNoAparelho();
-                atualizarSeletorEscolas();
-                
-                if(dadosApp.escolas.length > 0) {
-                    abrirModulo(moduloAtivoGlobal);
-                } else {
-                    exibirPainelVazio();
+                if (confirm(`Deseja apagar permanentemente a escola "${escAtual.nome}"?`)) {
+                    dadosApp.escolas.splice(dadosApp.escolaAtiva, 1);
+                    dadosApp.escolaAtiva = 0; 
+                    salvarNoAparelho();
+                    atualizarSeletorEscolas();
+                    
+                    if(dadosApp.escolas.length > 0) {
+                        abrirModulo(moduloAtivoGlobal);
+                    } else {
+                        exibirPainelVazio();
+                    }
                 }
             } else {
                 alert("Senha Master incorreta!");
@@ -381,6 +408,40 @@
             esc.turmaAtiva = esc.turmas.length - 1;
             salvarNoAparelho();
             abrirModulo('planejamento');
+        }
+
+        function editarTurmaAtiva() {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(!esc || !esc.turmas || esc.turmas.length === 0) return;
+            const turma = esc.turmas[esc.turmaAtiva];
+
+            if (verificarSenhaExclusao()) {
+                const novoNome = prompt("Editar nome da turma:", turma.nomeTurma);
+                if (novoNome && novoNome.trim()) {
+                    turma.nomeTurma = novoNome.trim();
+                    salvarNoAparelho();
+                    abrirModulo('planejamento');
+                }
+            } else {
+                alert("Senha Master incorreta!");
+            }
+        }
+
+        function excluirTurmaAtiva() {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(!esc || !esc.turmas || esc.turmas.length === 0) return;
+            const turma = esc.turmas[esc.turmaAtiva];
+
+            if (verificarSenhaExclusao()) {
+                if(confirm(`Deseja excluir permanentemente a turma "${turma.nomeTurma}" e seus planejamentos?`)) {
+                    esc.turmas.splice(esc.turmaAtiva, 1);
+                    esc.turmaAtiva = 0;
+                    salvarNoAparelho();
+                    abrirModulo('planejamento');
+                }
+            } else {
+                alert("Senha Master incorreta!");
+            }
         }
 
         function mudarAbaPlanejamento( aba ) {
@@ -417,12 +478,16 @@
         }
 
         function removerAulaDaTurma(indexAula) {
-            if(confirm("Deseja excluir esta aula?")) {
-                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
-                const turma = esc.turmas[esc.turmaAtiva];
-                turma.aulas.splice(indexAula, 1);
-                salvarNoAparelho();
-                renderizarAulasTurma();
+            if (verificarSenhaExclusao()) {
+                if(confirm("Deseja excluir esta aula?")) {
+                    const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                    const turma = esc.turmas[esc.turmaAtiva];
+                    turma.aulas.splice(indexAula, 1);
+                    salvarNoAparelho();
+                    renderizarAulasTurma();
+                }
+            } else {
+                alert("Senha Master incorreta!");
             }
         }
 
@@ -521,11 +586,13 @@
                 } else {
                     painel.innerHTML = `
                         <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planos por Turma</h4>
-                        <div class="row-aluno-add" style="margin-bottom: 15px;">
+                        <div class="row-aluno-add" style="margin-bottom: 15px; align-items: center;">
                             <select id="select-turma-plano" class="campo-busca" style="margin-bottom:0;" onchange="mudarTurmaAtiva()">
                                 ${esc.turmas.map((t, i) => `<option value="${i}" ${esc.turmaAtiva == i ? 'selected' : ''}>${t.nomeTurma}</option>`).join('')}
                             </select>
-                            <button class="btn-salvar" style="background:var(--azul-premium); margin:0; width:auto; white-space:nowrap;" onclick="adicionarNovaTurma()">+ Criar Sala</button>
+                            <button onclick="editarTurmaAtiva()" style="background:none; border:none; color:#F59E0B; font-size:1.1rem; cursor:pointer;" title="Editar Nome da Turma"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="excluirTurmaAtiva()" style="background:none; border:none; color:#EF4444; font-size:1.1rem; cursor:pointer;" title="Excluir Turma Atual"><i class="fa-solid fa-trash-can"></i></button>
+                            <button class="btn-salvar" style="background:var(--azul-premium); margin:0; width:auto; white-space:nowrap;" onclick="adicionarNovaTurma()">+ Sala</button>
                         </div>
 
                         <div class="tabs-planejamento">
