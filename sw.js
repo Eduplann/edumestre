@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edumestre-v2';
+const CACHE_NAME = 'edumestre-v3';
 const assetsToCache = [
   './index.html',
   './manifest.json',
