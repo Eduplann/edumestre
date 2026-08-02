@@ -176,37 +176,37 @@
             <div class="card azul" onclick="abrirModulo('planejamento')">
                 <i class="fa-solid fa-folder-tree"></i>
                 <h4>Planos por Turma</h4>
-                <p>Planos mensais, semestrais, anuais e aulas com anexos[cite: 1].</p>
+                <p>Planos mensais, semestrais, anuais e aulas com anexos.</p>
             </div>
             
             <div class="card verde" onclick="abrirModulo('alunos')">
                 <i class="fa-solid fa-address-book"></i>
                 <h4>Alunos & Notas</h4>
-                <p>Caderneta de notas ou bloco de ocorrências[cite: 1].</p>
+                <p>Caderneta de notas ou bloco de ocorrências.</p>
             </div>
 
             <div class="card roxo" onclick="abrirModulo('didatico')">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 <h4>Mapas & Apoio</h4>
-                <p>Roteiros, links e conteúdos de suporte didático[cite: 1].</p>
+                <p>Roteiros, links e conteúdos de suporte didático.</p>
             </div>
 
             <div class="card laranja" onclick="abrirModulo('exercicios')">
                 <i class="fa-solid fa-square-poll-horizontal"></i>
                 <h4>Banco de Questões</h4>
-                <p>Avaliações e exercícios arquivados[cite: 1].</p>
+                <p>Avaliações e exercícios arquivados.</p>
             </div>
 
             <div class="card rosa" onclick="abrirModulo('horarios')">
                 <i class="fa-solid fa-calendar-clock"></i>
                 <h4>Grade & Horários</h4>
-                <p>Cronograma operacional, turmas e unificados[cite: 1].</p>
+                <p>Cronograma operacional, turmas e unificados.</p>
             </div>
 
             <div class="card vermelho" onclick="abrirModulo('anotacoes')">
                 <i class="fa-solid fa-feather-pointed"></i>
                 <h4>Diário de Classe</h4>
-                <p>Relatos do encerramento das atividades[cite: 1].</p>
+                <p>Relatos do encerramento das atividades.</p>
             </div>
 
             <div class="card indigo" onclick="abrirModulo('reunioes')">
@@ -836,7 +836,7 @@
                         <div style="margin-bottom: 25px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <h5 style="color: #EC4899;"><i class="fa-solid fa-sun"></i> Turno Manhã</h5>
-                                <button class="btn-excluir" style="font-size:0.7rem; padding:4px 8px;" onclick="adicionarLinhaGrade('manha')">+ Adicionar Linha</button>
+                                <button class="btn-excluir" style="font-size:0.7rem; padding:4px 8px;" onclick="adicionarLinhaGradeComSenha('manha')">+ Adicionar Linha</button>
                             </div>
                             <div class="tabela-wrapper">
                                 <table class="tabela-grade-custom">
@@ -865,7 +865,7 @@
                         <div style="margin-bottom: 25px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <h5 style="color: #EC4899;"><i class="fa-solid fa-cloud-sun"></i> Turno Tarde</h5>
-                                <button class="btn-excluir" style="font-size:0.7rem; padding:4px 8px;" onclick="adicionarLinhaGrade('tarde')">+ Adicionar Linha</button>
+                                <button class="btn-excluir" style="font-size:0.7rem; padding:4px 8px;" onclick="adicionarLinhaGradeComSenha('tarde')">+ Adicionar Linha</button>
                             </div>
                             <div class="tabela-wrapper">
                                 <table class="tabela-grade-custom">
@@ -894,7 +894,7 @@
                         <div style="margin-bottom: 25px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <h5 style="color: #EC4899;"><i class="fa-solid fa-moon"></i> Turno Noite</h5>
-                                <button class="btn-excluir" style="font-size:0.7rem; padding:4px 8px;" onclick="adicionarLinhaGrade('noite')">+ Adicionar Linha</button>
+                                <button class="btn-excluir" style="font-size:0.7rem; padding:4px 8px;" onclick="adicionarLinhaGradeComSenha('noite')">+ Adicionar Linha</button>
                             </div>
                             <div class="tabela-wrapper">
                                 <table class="tabela-grade-custom">
@@ -919,7 +919,7 @@
                             </div>
                         </div>
 
-                        <button class="btn-salvar" style="background:#EC4899;" onclick="salvarGradeTurnos()"><i class="fa-solid fa-floppy-disk"></i> Salvar Todas as Grades desta Escola</button>
+                        <button class="btn-salvar" style="background:#EC4899;" onclick="salvarGradeTurnosComSenha()"><i class="fa-solid fa-floppy-disk"></i> Salvar / Editar Todas as Grades desta Escola</button>
                     </div>
 
                     <div id="bloco-grade-unificados" style="display: none;">
@@ -982,28 +982,46 @@
                     <td><input type="text" value="${l.sexta || ''}" id="input-${turnoNome}-${idx}-sexta"></td>
                     <td><input type="text" value="${l.sabado || ''}" id="input-${turnoNome}-${idx}-sabado"></td>
                     <td><input type="text" value="${l.domingo || ''}" id="input-${turnoNome}-${idx}-domingo"></td>
-                    <td><button class="btn-excluir" style="padding:4px 6px;" onclick="removerLinhaGrade('${turnoNome}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
+                    <td><button class="btn-excluir" style="padding:4px 6px;" onclick="removerLinhaGradeComSenha('${turnoNome}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
                 </tr>
             `).join('');
         }
 
-        function adicionarLinhaGrade(turnoNome) {
-            capturarDadosTabelasTurnosAtuais();
-            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
-            if(!esc.gradeTurnos[turnoNome]) esc.gradeTurnos[turnoNome] = [];
-            esc.gradeTurnos[turnoNome].push({
-                horario: "00:00 - 00:00", tipo: "Aula", segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: ""
-            });
-            salvarNoAparelho();
-            abrirModulo('horarios');
+        function adicionarLinhaGradeComSenha(turnoNome) {
+            if (verificarSenhaExclusao()) {
+                capturarDadosTabelasTurnosAtuais();
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                if(!esc.gradeTurnos[turnoNome]) esc.gradeTurnos[turnoNome] = [];
+                esc.gradeTurnos[turnoNome].push({
+                    horario: "00:00 - 00:00", tipo: "Aula", segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: ""
+                });
+                salvarNoAparelho();
+                abrirModulo('horarios');
+            } else {
+                alert("Senha Master incorreta! Ação negada.");
+            }
         }
 
-        function removerLinhaGrade(turnoNome, indexLinha) {
-            capturarDadosTabelasTurnosAtuais();
-            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
-            esc.gradeTurnos[turnoNome].splice(indexLinha, 1);
-            salvarNoAparelho();
-            abrirModulo('horarios');
+        function removerLinhaGradeComSenha(turnoNome, indexLinha) {
+            if (verificarSenhaExclusao()) {
+                capturarDadosTabelasTurnosAtuais();
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                esc.gradeTurnos[turnoNome].splice(indexLinha, 1);
+                salvarNoAparelho();
+                abrirModulo('horarios');
+            } else {
+                alert("Senha Master incorreta! Ação negada.");
+            }
+        }
+
+        function salvarGradeTurnosComSenha() {
+            if (verificarSenhaExclusao()) {
+                capturarDadosTabelasTurnosAtuais();
+                salvarNoAparelho();
+                alert("Grade de horários editada/salva com sucesso!");
+            } else {
+                alert("Senha Master incorreta! Alterações na grade não foram salvas.");
+            }
         }
 
         function capturarDadosTabelasTurnosAtuais() {
@@ -1036,11 +1054,6 @@
                     });
                 }
             });
-        }
-
-        function salvarGradeTurnos() {
-            capturarDadosTabelasTurnosAtuais();
-            salvarNoAparelho();
         }
 
         function renderizarGradeUnificada() {
@@ -1122,7 +1135,7 @@
             const alunos = dadosApp.escolas[dadosApp.escolaAtiva].alunos;
             alunos.forEach((a, idx) => {
                 alunos[idx].notaTrabalho = parseFloat(document.getElementById(`trab-${idx}`).value) || 0;
-                alunos[idx].notaExame = parseFloat(document.getElementById(`exame-${idx}`).value) || 0;
+                alunos.prompt = parseFloat(document.getElementById(`exame-${idx}`).value) || 0;
                 alunos[idx].obs = document.getElementById(`obs-${idx}`).value;
             });
             salvarNoAparelho();
