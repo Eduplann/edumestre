@@ -24,6 +24,7 @@
             --texto-claro: #F8FAFC;
             --texto-mutado: #64748B;
             --borda-glow: rgba(6, 182, 212, 0.15);
+            --cor-escola-ativa: var(--ciano-glow);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -42,7 +43,7 @@
         header {
             background: linear-gradient(145deg, #111827, #0B1329);
             padding: 30px 20px 25px 20px;
-            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+            border-bottom: 1px solid var(--cor-escola-ativa);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             margin-bottom: 25px;
         }
@@ -52,19 +53,19 @@
         .logo-emblem {
             position: relative; width: 48px; height: 48px;
             background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-            border: 1.5px solid rgba(6, 182, 212, 0.4);
+            border: 1.5px solid var(--cor-escola-ativa);
             border-radius: 14px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+            box-shadow: 0 0 25px var(--cor-escola-ativa);
         }
-        .logo-emblem i { font-size: 1.3rem; background: linear-gradient(135deg, var(--ciano-glow), var(--magenta-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; z-index: 2; }
+        .logo-emblem i { font-size: 1.3rem; background: linear-gradient(135deg, var(--cor-escola-ativa), var(--magenta-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; z-index: 2; }
         .logo-emblem::after {
             content: ''; position: absolute; inset: -3px; 
-            background: linear-gradient(135deg, var(--ciano-glow), var(--azul-premium));
+            background: linear-gradient(135deg, var(--cor-escola-ativa), var(--azul-premium));
             border-radius: 16px; z-index: -1; opacity: 0.3; filter: blur(6px);
         }
 
         .brand-text h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(to right, #FFF, #94A3B8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .brand-text span { font-size: 0.65rem; letter-spacing: 1.5px; color: var(--ciano-glow); font-weight: 700; display: block; text-transform: uppercase; }
+        .brand-text span { font-size: 0.65rem; letter-spacing: 1.5px; color: var(--cor-escola-ativa); font-weight: 700; display: block; text-transform: uppercase; }
 
         .seletor-escola-container {
             display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.03);
@@ -74,7 +75,7 @@
         .seletor-escola-container select option { background: var(--bg-cards); color: #fff; }
 
         main { padding: 0 15px; }
-        h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; padding-left: 8px; border-left: 4px solid var(--ciano-glow); color: #E2E8F0; }
+        h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; padding-left: 8px; border-left: 4px solid var(--cor-escola-ativa); color: #E2E8F0; }
 
         .grid-recursos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .card {
@@ -87,13 +88,13 @@
         .card h4 { font-size: 0.9rem; font-weight: 700; color: #F1F5F9; }
         .card p { font-size: 0.75rem; color: var(--texto-mutado); line-height: 1.3; }
 
-        .card.azul i { color: var(--azul-premium); text-shadow: 0 0 10px rgba(37,99,235,0.4); }
-        .card.verde i { color: #10B981; text-shadow: 0 0 10px rgba(16,185,129,0.4); }
-        .card.roxo i { color: var(--magenta-glow); text-shadow: 0 0 10px rgba(217,70,239,0.4); }
-        .card.laranja i { color: #F59E0B; text-shadow: 0 0 10px rgba(245,158,11,0.4); }
-        .card.rosa i { color: #EC4899; text-shadow: 0 0 10px rgba(236,72,153,0.4); }
-        .card.vermelho i { color: #EF4444; text-shadow: 0 0 10px rgba(239,68,68,0.4); }
-        .card.indigo i { color: #6366F1; text-shadow: 0 0 10px rgba(99,102,241,0.4); }
+        .card.azul i { color: var(--azul-premium); }
+        .card.verde i { color: #10B981; }
+        .card.roxo i { color: var(--magenta-glow); }
+        .card.laranja i { color: #F59E0B; }
+        .card.rosa i { color: #EC4899; }
+        .card.vermelho i { color: #EF4444; }
+        .card.indigo i { color: #6366F1; }
 
         .painel-conteudo { background-color: var(--bg-cards); border-radius: 16px; padding: 22px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .campo-busca, .textarea-app { width: 100%; padding: 12px 14px; background-color: var(--bg-inputs); border: 1px solid var(--borda-glow); border-radius: 10px; color: #fff; margin-bottom: 15px; font-size: 0.9rem; }
@@ -102,7 +103,7 @@
         .tabela-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
         th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        th { background-color: rgba(6, 182, 212, 0.05); color: var(--ciano-glow); font-weight: 600; }
+        th { background-color: rgba(6, 182, 212, 0.05); color: var(--cor-escola-ativa); font-weight: 600; }
 
         .btn-salvar { border: none; color: white; padding: 12px 15px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; font-size: 0.9rem; transition: background 0.2s; }
         .btn-excluir { background: rgba(239, 68, 68, 0.15); border: 1px solid #EF4444; color: #EF4444; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
@@ -114,12 +115,16 @@
         .card-aula-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         
         .menu-opcoes-plano { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-        .btn-modelo { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--ciano-glow); color: var(--ciano-glow); font-size: 0.75rem; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .btn-modelo:hover { background: var(--ciano-glow); color: #000; }
+        .btn-modelo { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--cor-escola-ativa); color: var(--cor-escola-ativa); font-size: 0.75rem; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-modelo:hover { background: var(--cor-escola-ativa); color: #000; }
 
-        .tabs-planejamento { display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px; }
+        .tabs-planejamento, .tabs-grade { display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px; }
         .tab-btn { flex: 1; background: none; border: none; color: var(--texto-mutado); padding: 8px 10px; font-size: 0.8rem; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .tab-btn.ativo { background: var(--azul-premium); color: white; }
+
+        .box-anexo { background: rgba(255,255,255,0.02); border: 1px dashed var(--borda-glow); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; }
+        .lista-anexos { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
+        .item-anexo { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; }
     </style>
 </head>
 <body>
@@ -137,7 +142,7 @@
         </div>
     </div>
 
-    <header>
+    <header id="cabecalho-principal">
         <div class="brand-container">
             <div class="logo-emblem">
                 <i class="fa-solid fa-graduation-cap"></i>
@@ -151,8 +156,8 @@
         <div class="seletor-escola-container">
             <select id="select-escola" onchange="mudarEscolaAtiva()">
                 </select>
-            <button onclick="editarEscolaAtiva()" style="background: none; border: none; color: #F59E0B; font-size: 1.0rem; cursor: pointer;" title="Editar Nome da Escola Atual"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button onclick="adicionarNovaEscola()" style="background: none; border: none; color: var(--ciano-glow); font-size: 1.1rem; cursor: pointer;" title="Adicionar Escola"><i class="fa-solid fa-circle-plus"></i></button>
+            <button onclick="editarEscolaAtiva()" style="background: none; border: none; color: #F59E0B; font-size: 1.0rem; cursor: pointer;" title="Editar Nome/Cor da Escola"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button onclick="adicionarNovaEscola()" style="background: none; border: none; color: var(--cor-escola-ativa); font-size: 1.1rem; cursor: pointer;" title="Adicionar Escola"><i class="fa-solid fa-circle-plus"></i></button>
             <button onclick="excluirEscolaAtiva()" style="background: none; border: none; color: #EF4444; font-size: 1.1rem; cursor: pointer;" title="Excluir Escola Atual"><i class="fa-solid fa-trash-can"></i></button>
         </div>
     </header>
@@ -164,7 +169,7 @@
             <div class="card azul" onclick="abrirModulo('planejamento')">
                 <i class="fa-solid fa-folder-tree"></i>
                 <h4>Planos por Turma</h4>
-                <p>Planos mensais, semestrais, anuais e aulas.</p>
+                <p>Planos mensais, semestrais, anuais e aulas com anexos.</p>
             </div>
             
             <div class="card verde" onclick="abrirModulo('alunos')">
@@ -187,8 +192,8 @@
 
             <div class="card rosa" onclick="abrirModulo('horarios')">
                 <i class="fa-solid fa-calendar-clock"></i>
-                <h4>Grade Horária</h4>
-                <p>Cronograma operacional estruturado.</p>
+                <h4>Grade & Horários</h4>
+                <p>Cronograma operacional, turmas e unificados.</p>
             </div>
 
             <div class="card vermelho" onclick="abrirModulo('anotacoes')">
@@ -200,7 +205,7 @@
             <div class="card indigo" onclick="abrirModulo('reunioes')">
                 <i class="fa-solid fa-handshake-angle"></i>
                 <h4>Reuniões Pedagógicas</h4>
-                <p>Anotações de encontros, pautas e alinhamentos.</p>
+                <p>Encontros, atas e arquivos anexos.</p>
             </div>
         </div>
 
@@ -286,14 +291,26 @@
             }
         }
 
+        function aplicarCorEscolaAtiva() {
+            if (dadosApp.escolas && dadosApp.escolas.length > 0) {
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                if (esc && esc.cor) {
+                    document.documentElement.style.setProperty('--cor-escola-ativa', esc.cor);
+                } else {
+                    document.documentElement.style.setProperty('--cor-escola-ativa', '#06B6D4');
+                }
+            }
+        }
+
         function atualizarSeletorEscolas() {
+            aplicarCorEscolaAtiva();
             const select = document.getElementById('select-escola');
             if (!dadosApp.escolas || dadosApp.escolas.length === 0) {
                 select.innerHTML = `<option value="">Nenhuma escola cadastrada</option>`;
                 return;
             }
             select.innerHTML = dadosApp.escolas.map((esc, idx) => `
-                <option value="${idx}" ${dadosApp.escolaAtiva === idx ? 'selected' : ''}>${esc.nome}</option>
+                <option value="${idx}" ${dadosApp.escolaAtiva === idx ? 'selected' : ''}>🏢 ${esc.nome}</option>
             `).join('');
         }
 
@@ -308,7 +325,7 @@
 
         function exibirPainelVazio() {
             document.getElementById('painel-dinamico').innerHTML = `
-                <h4 style="margin-bottom: 10px; color: var(--ciano-glow); text-align:center;"><i class="fa-solid fa-folder-open"></i> Sem Escolas Registradas</h4>
+                <h4 style="margin-bottom: 10px; color: var(--cor-escola-ativa); text-align:center;"><i class="fa-solid fa-folder-open"></i> Sem Escolas Registradas</h4>
                 <p style="color: var(--texto-mutado); font-size: 0.85rem; text-align:center;">Toque no botão de mais <strong>(+)</strong> localizado no seletor do topo para registrar sua primeira unidade de ensino.</p>
             `;
         }
@@ -318,18 +335,21 @@
             if(val === "") return;
             dadosApp.escolaAtiva = parseInt(val);
             salvarNoAparelho();
+            atualizarSeletorEscolas();
             abrirModulo(moduloAtivoGlobal);
         }
 
         function adicionarNovaEscola() {
             const nome = prompt("Digite o nome da nova Escola:");
             if (!nome || !nome.trim()) return;
+            const cor = prompt("Escolha uma cor para identificar esta escola (Ex: #06B6D4, #10B981, #D946EF, #F59E0B):", "#06B6D4") || "#06B6D4";
             
             if(!dadosApp.escolas) dadosApp.escolas = [];
 
             dadosApp.escolas.push({
                 nome: nome.trim(),
-                diarioTexto: "", mapasTexto: "", exerciciosTexto: "", horariosTexto: "", observacoesLivres: "", reunioesTexto: "",
+                cor: cor.trim(),
+                diarioTexto: "", mapasTexto: "", exerciciosTexto: "", observacoesLivres: "", reunioesTexto: "", reunioesAnexos: [],
                 gradeHorarios: { segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" },
                 turmaAtiva: 0,
                 turmas: [], 
@@ -349,10 +369,14 @@
                 const novoNome = prompt("Editar nome da escola:", escAtual.nome);
                 if (novoNome && novoNome.trim()) {
                     escAtual.nome = novoNome.trim();
-                    salvarNoAparelho();
-                    atualizarSeletorEscolas();
-                    abrirModulo(moduloAtivoGlobal);
                 }
+                const novaCor = prompt("Editar código da cor (Hex):", escAtual.cor || "#06B6D4");
+                if (novaCor && novaCor.trim()) {
+                    escAtual.cor = novaCor.trim();
+                }
+                salvarNoAparelho();
+                atualizarSeletorEscolas();
+                abrirModulo(moduloAtivoGlobal);
             } else {
                 alert("Senha Master incorreta!");
             }
@@ -460,6 +484,25 @@
             });
         }
 
+        function mudarAbaGrade( aba ) {
+            ['escola', 'unificados'].forEach(tipo => {
+                const el = document.getElementById(`bloco-grade-${tipo}`);
+                const btn = document.getElementById(`tab-grade-${tipo}`);
+                if(el && btn) {
+                    if(tipo === aba) {
+                        el.style.display = 'block';
+                        btn.classList.add('ativo');
+                    } else {
+                        el.style.display = 'none';
+                        btn.classList.remove('ativo');
+                    }
+                }
+            });
+            if(aba === 'unificados') {
+                renderizarGradeUnificada();
+            }
+        }
+
         function adicionarAulaNaTurma() {
             const esc = dadosApp.escolas[dadosApp.escolaAtiva];
             if(!esc || !esc.turmas || esc.turmas.length === 0) return;
@@ -471,7 +514,8 @@
 
             turma.aulas.push({
                 titulo: tituloAula.trim(),
-                conteudo: ""
+                conteudo: "",
+                anexos: []
             });
             salvarNoAparelho();
             renderizarAulasTurma();
@@ -489,6 +533,56 @@
             } else {
                 alert("Senha Master incorreta!");
             }
+        }
+
+        function processarAnexoAula(inputElement, indexAula) {
+            const arquivo = inputElement.files[0];
+            if (!arquivo) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                const turma = esc.turmas[esc.turmaAtiva];
+                if (!turma.aulas[indexAula].anexos) turma.aulas[indexAula].anexos = [];
+                turma.aulas[indexAula].anexos.push({
+                    nome: arquivo.name,
+                    dados: e.target.result
+                });
+                salvarNoAparelho();
+                renderizarAulasTurma();
+            };
+            reader.readAsDataURL(arquivo);
+        }
+
+        function removerAnexoAula(indexAula, indexAnexo) {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            const turma = esc.turmas[esc.turmaAtiva];
+            turma.aulas[indexAula].anexos.splice(indexAnexo, 1);
+            salvarNoAparelho();
+            renderizarAulasTurma();
+        }
+
+        function processarAnexoReuniao(inputElement) {
+            const arquivo = inputElement.files[0];
+            if (!arquivo) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                if (!esc.reunioesAnexos) esc.reunioesAnexos = [];
+                esc.reunioesAnexos.push({
+                    nome: arquivo.name,
+                    dados: e.target.result
+                });
+                salvarNoAparelho();
+                abrirModulo('reunioes');
+            };
+            reader.readAsDataURL(arquivo);
+        }
+
+        function removerAnexoReuniao(indexAnexo) {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            esc.reunioesAnexos.splice(indexAnexo, 1);
+            salvarNoAparelho();
+            abrirModulo('reunioes');
         }
 
         function inserirModeloPlanejamento(indexAula, tipo) {
@@ -542,7 +636,7 @@
             containerAulas.innerHTML = turma.aulas.map((aula, idx) => `
                 <div class="card-aula">
                     <div class="card-aula-header">
-                        <strong style="color: var(--ciano-glow); font-size:0.95rem;">${aula.titulo}</strong>
+                        <strong style="color: var(--cor-escola-ativa); font-size:0.95rem;">${aula.titulo}</strong>
                         <button class="btn-excluir" onclick="removerAulaDaTurma(${idx})"><i class="fa-solid fa-trash"></i> Excluir</button>
                     </div>
                     <div class="menu-opcoes-plano">
@@ -551,7 +645,20 @@
                         <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'pratica')">+ Prática</button>
                         <button class="btn-modelo" onclick="inserirModeloPlanejamento(${idx}, 'intervencao')">+ Exposição</button>
                     </div>
-                    <textarea id="txt-aula-${idx}" class="textarea-app" style="height: 120px; margin-bottom: 0;" placeholder="Planejamento e objetivos desta aula..." oninput="salvarDadosTurma()">${aula.conteudo || ''}</textarea>
+                    <textarea id="txt-aula-${idx}" class="textarea-app" style="height: 100px; margin-bottom: 8px;" placeholder="Planejamento e objetivos desta aula..." oninput="salvarDadosTurma()">${aula.conteudo || ''}</textarea>
+                    
+                    <div class="box-anexo">
+                        <span><i class="fa-solid fa-paperclip"></i> Anexar arquivo para esta aula:</span>
+                        <input type="file" style="font-size:0.75rem; color: #fff;" onchange="processarAnexoAula(this, ${idx})">
+                    </div>
+                    <div class="lista-anexos">
+                        ${(aula.anexos || []).map((anx, aIdx) => `
+                            <div class="item-anexo">
+                                <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
+                                <button onclick="removerAnexoAula(${idx}, ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
             `).join('');
         }
@@ -579,20 +686,20 @@
             if (modulo === 'planejamento') {
                 if(!esc.turmas || esc.turmas.length === 0) {
                     painel.innerHTML = `
-                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planos por Turma</h4>
-                        <p style="color: var(--texto-mutado); font-size: 0.85rem; margin-bottom: 15px;">Nenhuma sala ou turma criada nesta escola.</p>
-                        <button class="btn-salvar" style="background:var(--azul-premium); width:auto;" onclick="adicionarNovaTurma()">+ Criar Primeira Sala</button>
+                        <h4 style="color: var(--cor-escola-ativa); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planos por Turma</h4>
+                        <p style="color: var(--texto-mutado); font-size: 0.85rem; margin-bottom: 15px;">Nenhuma sala ou turma criada nesta escola (${esc.nome}).</p>
+                        <button class="btn-salvar" style="background:var(--cor-escola-ativa); color:#000; width:auto;" onclick="adicionarNovaTurma()">+ Criar Primeira Sala</button>
                     `;
                 } else {
                     painel.innerHTML = `
-                        <h4 style="color: var(--azul-premium); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planos por Turma</h4>
+                        <h4 style="color: var(--cor-escola-ativa); margin-bottom: 12px;"><i class="fa-solid fa-folder-tree"></i> Planos por Turma - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
                         <div class="row-aluno-add" style="margin-bottom: 15px; align-items: center;">
                             <select id="select-turma-plano" class="campo-busca" style="margin-bottom:0;" onchange="mudarTurmaAtiva()">
                                 ${esc.turmas.map((t, i) => `<option value="${i}" ${esc.turmaAtiva == i ? 'selected' : ''}>${t.nomeTurma}</option>`).join('')}
                             </select>
                             <button onclick="editarTurmaAtiva()" style="background:none; border:none; color:#F59E0B; font-size:1.1rem; cursor:pointer;" title="Editar Nome da Turma"><i class="fa-solid fa-pen-to-square"></i></button>
                             <button onclick="excluirTurmaAtiva()" style="background:none; border:none; color:#EF4444; font-size:1.1rem; cursor:pointer;" title="Excluir Turma Atual"><i class="fa-solid fa-trash-can"></i></button>
-                            <button class="btn-salvar" style="background:var(--azul-premium); margin:0; width:auto; white-space:nowrap;" onclick="adicionarNovaTurma()">+ Sala</button>
+                            <button class="btn-salvar" style="background:var(--cor-escola-ativa); color:#000; margin:0; width:auto; white-space:nowrap;" onclick="adicionarNovaTurma()">+ Sala</button>
                         </div>
 
                         <div class="tabs-planejamento">
@@ -603,24 +710,24 @@
                         </div>
 
                         <div id="bloco-plano-mensal">
-                            <label style="font-size:0.8rem; color:var(--ciano-glow); font-weight:600; display:block; margin-bottom:5px;">Planejamento Mensal</label>
+                            <label style="font-size:0.8rem; color:var(--cor-escola-ativa); font-weight:600; display:block; margin-bottom:5px;">Planejamento Mensal</label>
                             <textarea id="txt-turma-mensal" class="textarea-app" style="height: 150px;" placeholder="Objetivos e metas para o mês nesta turma..." oninput="salvarDadosTurma()"></textarea>
                         </div>
 
                         <div id="bloco-plano-semestral" style="display: none;">
-                            <label style="font-size:0.8rem; color:var(--ciano-glow); font-weight:600; display:block; margin-bottom:5px;">Planejamento Semestral</label>
+                            <label style="font-size:0.8rem; color:var(--cor-escola-ativa); font-weight:600; display:block; margin-bottom:5px;">Planejamento Semestral</label>
                             <textarea id="txt-turma-semestral" class="textarea-app" style="height: 150px;" placeholder="Diretrizes gerais para o semestre..." oninput="salvarDadosTurma()"></textarea>
                         </div>
 
                         <div id="bloco-plano-anual" style="display: none;">
-                            <label style="font-size:0.8rem; color:var(--ciano-glow); font-weight:600; display:block; margin-bottom:5px;">Planejamento Anual</label>
+                            <label style="font-size:0.8rem; color:var(--cor-escola-ativa); font-weight:600; display:block; margin-bottom:5px;">Planejamento Anual</label>
                             <textarea id="txt-turma-anual" class="textarea-app" style="height: 150px;" placeholder="Ementa e metas gerais do ano letivo..." oninput="salvarDadosTurma()"></textarea>
                         </div>
 
                         <div id="bloco-plano-aulas" style="display: none;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                 <span style="font-size: 0.85rem; color: var(--texto-mutado);">Aulas cadastradas:</span>
-                                <button class="btn-salvar" style="background:var(--ciano-glow); color:black; margin:0; width:auto; font-size:0.8rem; padding: 8px 12px;" onclick="adicionarAulaNaTurma()">+ Adicionar Nova Aula</button>
+                                <button class="btn-salvar" style="background:var(--cor-escola-ativa); color:black; margin:0; width:auto; font-size:0.8rem; padding: 8px 12px;" onclick="adicionarAulaNaTurma()">+ Adicionar Nova Aula</button>
                             </div>
                             <div id="container-aulas"></div>
                         </div>
@@ -634,7 +741,7 @@
             else if (modulo === 'alunos') {
                 if(!esc.alunos) esc.alunos = [];
                 painel.innerHTML = `
-                    <h4 style="color: #10B981; margin-bottom: 15px;"><i class="fa-solid fa-address-book"></i> Alunos & Notas</h4>
+                    <h4 style="color: #10B981; margin-bottom: 15px;"><i class="fa-solid fa-address-book"></i> Alunos & Notas - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
                     <div class="row-aluno-add">
                         <input type="text" id="novo-aluno-nome" class="campo-busca" style="margin-bottom:0;" placeholder="Nome do Aluno">
                         <button class="btn-salvar" style="background:#10B981; margin:0; width:auto; white-space:nowrap;" onclick="adicionarAluno()">+ Cadastrar</button>
@@ -659,13 +766,13 @@
                     <hr style="border:0; border-top:1px solid rgba(255,255,255,0.05); margin:20px 0;">
                     <h4 style="color:#10B981; margin-bottom:10px;"><i class="fa-solid fa-book"></i> Bloco de Notas Coletivas</h4>
                     <textarea id="txt-obs-livres" class="textarea-app" style="height: 100px;" placeholder="Anotações livres gerais ou ocorrências...">${esc.observacoesLivres || ""}</textarea>
-                    <button class="btn-salvar" style="background:var(--ciano-glow);" onclick="salvarObsLivres()"><i class="fa-solid fa-floppy-disk"></i> Salvar Bloco Livre</button>
+                    <button class="btn-salvar" style="background:var(--cor-escola-ativa); color:#000;" onclick="salvarObsLivres()"><i class="fa-solid fa-floppy-disk"></i> Salvar Bloco Livre</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Dados salvos!</div>
                 `;
             }
             else if (modulo === 'didatico') {
                 painel.innerHTML = `
-                    <h4 style="color: var(--magenta-glow); margin-bottom: 15px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Mapas & Apoio</h4>
+                    <h4 style="color: var(--magenta-glow); margin-bottom: 15px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Mapas & Apoio - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
                     <textarea id="txt-mapas" class="textarea-app" style="height: 160px;" placeholder="Insira roteiros, links de mapas mentais, apresentações de slides...">${esc.mapasTexto || ""}</textarea>
                     <button class="btn-salvar" style="background:var(--magenta-glow);" onclick="salvarDidatico()"><i class="fa-solid fa-floppy-disk"></i> Salvar Materiais</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Materiais Atualizados!</div>
@@ -673,7 +780,7 @@
             }
             else if (modulo === 'exercicios') {
                 painel.innerHTML = `
-                    <h4 style="color: #F59E0B; margin-bottom: 15px;"><i class="fa-solid fa-square-poll-horizontal"></i> Banco de Questões</h4>
+                    <h4 style="color: #F59E0B; margin-bottom: 15px;"><i class="fa-solid fa-square-poll-horizontal"></i> Banco de Questões - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
                     <textarea id="txt-exercicios" class="textarea-app" style="height: 160px;" placeholder="Guarde suas questões estruturadas, enunciados e avaliações aqui...">${esc.exerciciosTexto || ""}</textarea>
                     <button class="btn-salvar" style="background:#F59E0B; color:black;" onclick="salvarExercicios()"><i class="fa-solid fa-floppy-disk"></i> Gravar Banco de Exercícios</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Banco salvo!</div>
@@ -684,38 +791,58 @@
                     esc.gradeHorarios = { segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" };
                 }
                 const g = esc.gradeHorarios;
-                painel.innerHTML = `
-                    <h4 style="color: #EC4899; margin-bottom: 15px;"><i class="fa-solid fa-calendar-clock"></i> Grade Horária (Segunda a Domingo)</h4>
-                    <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 15px;">Defina livremente os horários e atividades para cada dia da semana:</p>
-                    
-                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Segunda-feira</label>
-                    <textarea id="gh-segunda" class="textarea-app" style="height: 70px;" placeholder="Ex: 08:00 - Aula X / 14:00 - Reunião">${g.segunda || ""}</textarea>
-                    
-                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Terça-feira</label>
-                    <textarea id="gh-terca" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.terca || ""}</textarea>
-                    
-                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Quarta-feira</label>
-                    <textarea id="gh-quarta" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.quarta || ""}</textarea>
-                    
-                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Quinta-feira</label>
-                    <textarea id="gh-quinta" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.quinta || ""}</textarea>
-                    
-                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Sexta-feira</label>
-                    <textarea id="gh-sexta" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.sexta || ""}</textarea>
-                    
-                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Sábado</label>
-                    <textarea id="gh-sabado" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.sabado || ""}</textarea>
-                    
-                    <label style="font-size:0.85rem; color:var(--ciano-glow); font-weight:600;">Domingo</label>
-                    <textarea id="gh-domingo" class="textarea-app" style="height: 70px;" placeholder="Defina seus horários...">${g.domingo || ""}</textarea>
+                const listaTurmasStr = esc.turmas && esc.turmas.length > 0 ? esc.turmas.map(t => t.nomeTurma).join(', ') : 'Nenhuma turma cadastrada nesta escola';
 
-                    <button class="btn-salvar" style="background:#EC4899;" onclick="salvarGradeHorarios()"><i class="fa-solid fa-floppy-disk"></i> Salvar Grade Horária</button>
+                painel.innerHTML = `
+                    <h4 style="color: #EC4899; margin-bottom: 10px;"><i class="fa-solid fa-calendar-clock"></i> Grade & Horários</h4>
+                    <div style="font-size: 0.8rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                        <strong>Escola Atual:</strong> <span style="color:${esc.cor || '#06B6D4'}">${esc.nome}</span><br>
+                        <strong>Turmas Disponíveis para alocar:</strong> ${listaTurmasStr}
+                    </div>
+
+                    <div class="tabs-grade">
+                        <button class="tab-btn ativo" id="tab-grade-escola" onclick="mudarAbaGrade('escola')">Grade desta Escola</button>
+                        <button class="tab-btn" id="tab-grade-unificados" onclick="mudarAbaGrade('unificados')">Horários Unificados (Geral)</button>
+                    </div>
+
+                    <div id="bloco-grade-escola">
+                        <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 12px;">Defina os horários, espaço e turmas para cada dia nesta escola:</p>
+                        
+                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Segunda-feira</label>
+                        <textarea id="gh-segunda" class="textarea-app" style="height: 60px;" placeholder="Ex: [Turma 6° A] 08:00 - Matemática / Sala 02">${g.segunda || ""}</textarea>
+                        
+                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Terça-feira</label>
+                        <textarea id="gh-terca" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.terca || ""}</textarea>
+                        
+                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Quarta-feira</label>
+                        <textarea id="gh-quarta" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.quarta || ""}</textarea>
+                        
+                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Quinta-feira</label>
+                        <textarea id="gh-quinta" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.quinta || ""}</textarea>
+                        
+                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Sexta-feira</label>
+                        <textarea id="gh-sexta" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.sexta || ""}</textarea>
+                        
+                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Sábado</label>
+                        <textarea id="gh-sabado" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.sabado || ""}</textarea>
+                        
+                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Domingo</label>
+                        <textarea id="gh-domingo" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.domingo || ""}</textarea>
+
+                        <button class="btn-salvar" style="background:#EC4899;" onclick="salvarGradeHorarios()"><i class="fa-solid fa-floppy-disk"></i> Salvar Grade da Escola</button>
+                    </div>
+
+                    <div id="bloco-grade-unificados" style="display: none;">
+                        <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 12px;">Panorama geral consolidado de todas as unidades de ensino cadastradas:</p>
+                        <div id="container-horarios-unificados"></div>
+                    </div>
+
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Grade fixada!</div>
                 `;
             }
             else if (modulo === 'anotacoes') {
                 painel.innerHTML = `
-                    <h4 style="color: #EF4444; margin-bottom: 15px;"><i class="fa-solid fa-feather-pointed"></i> Diário de Classe</h4>
+                    <h4 style="color: #EF4444; margin-bottom: 15px;"><i class="fa-solid fa-feather-pointed"></i> Diário de Classe - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
                     <textarea id="txt-diario" class="textarea-app" style="height: 160px;" placeholder="Relate as ocorrências operacionais e o encerramento do dia letivo...">${esc.diarioTexto || ""}</textarea>
                     <button class="btn-salvar" style="background:#EF4444;" onclick="salvarDiario()"><i class="fa-solid fa-floppy-disk"></i> Arquivar Diário</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Diário arquivado!</div>
@@ -723,12 +850,52 @@
             }
             else if (modulo === 'reunioes') {
                 painel.innerHTML = `
-                    <h4 style="color: #6366F1; margin-bottom: 15px;"><i class="fa-solid fa-handshake-angle"></i> Reuniões Pedagógicas</h4>
-                    <textarea id="txt-reunioes" class="textarea-app" style="height: 160px;" placeholder="Registre pautas, orientações da coordenação, acordos e atas de reuniões desta escola...">${esc.reunioesTexto || ""}</textarea>
+                    <h4 style="color: #6366F1; margin-bottom: 15px;"><i class="fa-solid fa-handshake-angle"></i> Reuniões Pedagógicas - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
+                    <textarea id="txt-reunioes" class="textarea-app" style="height: 120px;" placeholder="Registre pautas, orientações da coordenação, acordos e atas de reuniões desta escola...">${esc.reunioesTexto || ""}</textarea>
+                    
+                    <div class="box-anexo">
+                        <span><i class="fa-solid fa-paperclip"></i> Anexar documento ou ata (PDF/Imagem):</span>
+                        <input type="file" style="font-size:0.75rem; color: #fff;" onchange="processarAnexoReuniao(this)">
+                    </div>
+                    <div class="lista-anexos" style="margin-bottom:15px;">
+                        ${(esc.reunioesAnexos || []).map((anx, aIdx) => `
+                            <div class="item-anexo">
+                                <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
+                                <button onclick="removerAnexoReuniao(${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        `).join('')}
+                    </div>
+
                     <button class="btn-salvar" style="background:#6366F1;" onclick="salvarReunioes()"><i class="fa-solid fa-floppy-disk"></i> Salvar Reuniões</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Reunião salva!</div>
                 `;
             }
+        }
+
+        function renderizarGradeUnificada() {
+            const container = document.getElementById('container-horarios-unificados');
+            if(!dadosApp.escolas || dadosApp.escolas.length === 0) {
+                container.innerHTML = `<p style="color:var(--texto-mutado);">Nenhuma escola cadastrada.</p>`;
+                return;
+            }
+
+            container.innerHTML = dadosApp.escolas.map((esc) => {
+                const g = esc.gradeHorarios || {};
+                return `
+                    <div style="background: var(--bg-inputs); border-left: 4px solid ${esc.cor || '#06B6D4'}; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                        <h5 style="color: ${esc.cor || '#06B6D4'}; margin-bottom: 8px; font-size: 0.95rem;">🏢 ${esc.nome}</h5>
+                        <div style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px; color: #CBD5E1;">
+                            <div><strong>Seg:</strong> ${g.segunda || '-'}</div>
+                            <div><strong>Ter:</strong> ${g.terca || '-'}</div>
+                            <div><strong>Qua:</strong> ${g.quarta || '-'}</div>
+                            <div><strong>Qui:</strong> ${g.quinta || '-'}</div>
+                            <div><strong>Sex:</strong> ${g.sexta || '-'}</div>
+                            <div><strong>Sáb:</strong> ${g.sabado || '-'}</div>
+                            <div><strong>Dom:</strong> ${g.domingo || '-'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function salvarDiario() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].diarioTexto = document.getElementById('txt-diario').value; salvarNoAparelho(); } }
