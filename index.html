@@ -125,6 +125,13 @@
         .box-anexo { background: rgba(255,255,255,0.02); border: 1px dashed var(--borda-glow); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; }
         .lista-anexos { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
         .item-anexo { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; }
+
+        /* Estilos específicos para a Grade de Horários customizada */
+        .tabela-grade-custom { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.8rem; }
+        .tabela-grade-custom th, .tabela-grade-custom td { border: 1px solid var(--borda-glow); padding: 8px; text-align: center; }
+        .tabela-grade-custom th { background-color: rgba(236, 72, 153, 0.1); color: #EC4899; }
+        .tabela-grade-custom input, .tabela-grade-custom select { width: 100%; background: var(--bg-inputs); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 6px; border-radius: 6px; font-size: 0.75rem; text-align: center; }
+        .tabela-grade-custom td:first-child, .tabela-grade-custom td:nth-child(2) { background: rgba(6, 182, 212, 0.05); }
     </style>
 </head>
 <body>
@@ -169,37 +176,37 @@
             <div class="card azul" onclick="abrirModulo('planejamento')">
                 <i class="fa-solid fa-folder-tree"></i>
                 <h4>Planos por Turma</h4>
-                <p>Planos mensais, semestrais, anuais e aulas com anexos.</p>
+                <p>Planos mensais, semestrais, anuais e aulas com anexos[cite: 1].</p>
             </div>
             
             <div class="card verde" onclick="abrirModulo('alunos')">
                 <i class="fa-solid fa-address-book"></i>
                 <h4>Alunos & Notas</h4>
-                <p>Caderneta de notas ou bloco de ocorrências.</p>
+                <p>Caderneta de notas ou bloco de ocorrências[cite: 1].</p>
             </div>
 
             <div class="card roxo" onclick="abrirModulo('didatico')">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 <h4>Mapas & Apoio</h4>
-                <p>Roteiros, links e conteúdos de suporte didático.</p>
+                <p>Roteiros, links e conteúdos de suporte didático[cite: 1].</p>
             </div>
 
             <div class="card laranja" onclick="abrirModulo('exercicios')">
                 <i class="fa-solid fa-square-poll-horizontal"></i>
                 <h4>Banco de Questões</h4>
-                <p>Avaliações e exercícios arquivados.</p>
+                <p>Avaliações e exercícios arquivados[cite: 1].</p>
             </div>
 
             <div class="card rosa" onclick="abrirModulo('horarios')">
                 <i class="fa-solid fa-calendar-clock"></i>
                 <h4>Grade & Horários</h4>
-                <p>Cronograma operacional, turmas e unificados.</p>
+                <p>Cronograma operacional, turmas e unificados[cite: 1].</p>
             </div>
 
             <div class="card vermelho" onclick="abrirModulo('anotacoes')">
                 <i class="fa-solid fa-feather-pointed"></i>
                 <h4>Diário de Classe</h4>
-                <p>Relatos do encerramento das atividades.</p>
+                <p>Relatos do encerramento das atividades[cite: 1].</p>
             </div>
 
             <div class="card indigo" onclick="abrirModulo('reunioes')">
@@ -350,7 +357,11 @@
                 nome: nome.trim(),
                 cor: cor.trim(),
                 diarioTexto: "", mapasTexto: "", exerciciosTexto: "", observacoesLivres: "", reunioesTexto: "", reunioesAnexos: [],
-                gradeHorarios: { segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" },
+                gradeTurnos: {
+                    manha: gerarLinhasGradeVazias(),
+                    tarde: gerarLinhasGradeVazias(),
+                    noite: gerarLinhasGradeVazias()
+                },
                 turmaAtiva: 0,
                 turmas: [], 
                 alunos: []
@@ -359,6 +370,16 @@
             salvarNoAparelho();
             atualizarSeletorEscolas();
             abrirModulo(moduloAtivoGlobal);
+        }
+
+        function gerarLinhasGradeVazias() {
+            return [
+                { horario: "07:00 - 07:50", tipo: "Aula", segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" },
+                { horario: "07:50 - 08:40", tipo: "Aula", segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" },
+                { horario: "08:40 - 09:30", tipo: "Aula", segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" },
+                { horario: "09:30 - 09:50", tipo: "Intervalo", segunda: "Recreio", terca: "Recreio", quarta: "Recreio", quinta: "Recreio", sexta: "Recreio", sabado: "-", domingo: "-" },
+                { horario: "09:50 - 10:40", tipo: "Aula", segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" }
+            ];
         }
 
         function editarEscolaAtiva() {
@@ -787,53 +808,122 @@
                 `;
             }
             else if (modulo === 'horarios') {
-                if(!esc.gradeHorarios) {
-                    esc.gradeHorarios = { segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: "" };
+                if(!esc.gradeTurnos) {
+                    esc.gradeTurnos = {
+                        manha: gerarLinhasGradeVazias(),
+                        tarde: gerarLinhasGradeVazias(),
+                        noite: gerarLinhasGradeVazias()
+                    };
                 }
-                const g = esc.gradeHorarios;
                 const listaTurmasStr = esc.turmas && esc.turmas.length > 0 ? esc.turmas.map(t => t.nomeTurma).join(', ') : 'Nenhuma turma cadastrada nesta escola';
 
                 painel.innerHTML = `
                     <h4 style="color: #EC4899; margin-bottom: 10px;"><i class="fa-solid fa-calendar-clock"></i> Grade & Horários</h4>
                     <div style="font-size: 0.8rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
                         <strong>Escola Atual:</strong> <span style="color:${esc.cor || '#06B6D4'}">${esc.nome}</span><br>
-                        <strong>Turmas Disponíveis para alocar:</strong> ${listaTurmasStr}
+                        <strong>Turmas Disponíveis:</strong> ${listaTurmasStr}
                     </div>
 
                     <div class="tabs-grade">
-                        <button class="tab-btn ativo" id="tab-grade-escola" onclick="mudarAbaGrade('escola')">Grade desta Escola</button>
-                        <button class="tab-btn" id="tab-grade-unificados" onclick="mudarAbaGrade('unificados')">Horários Unificados (Geral)</button>
+                        <button class="tab-btn ativo" id="tab-grade-escola" onclick="mudarAbaGrade('escola')">Turnos desta Escola</button>
+                        <button class="tab-btn" id="tab-grade-unificados" onclick="mudarAbaGrade('unificados')">Horário Universal (Todas as Aulas)</button>
                     </div>
 
                     <div id="bloco-grade-escola">
-                        <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 12px;">Defina os horários, espaço e turmas para cada dia nesta escola:</p>
+                        <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 12px;">Preencha os horários para cada turno (Manhã, Tarde e Noite):</p>
                         
-                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Segunda-feira</label>
-                        <textarea id="gh-segunda" class="textarea-app" style="height: 60px;" placeholder="Ex: [Turma 6° A] 08:00 - Matemática / Sala 02">${g.segunda || ""}</textarea>
-                        
-                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Terça-feira</label>
-                        <textarea id="gh-terca" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.terca || ""}</textarea>
-                        
-                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Quarta-feira</label>
-                        <textarea id="gh-quarta" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.quarta || ""}</textarea>
-                        
-                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Quinta-feira</label>
-                        <textarea id="gh-quinta" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.quinta || ""}</textarea>
-                        
-                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Sexta-feira</label>
-                        <textarea id="gh-sexta" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.sexta || ""}</textarea>
-                        
-                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Sábado</label>
-                        <textarea id="gh-sabado" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.sabado || ""}</textarea>
-                        
-                        <label style="font-size:0.85rem; color:var(--cor-escola-ativa); font-weight:600;">Domingo</label>
-                        <textarea id="gh-domingo" class="textarea-app" style="height: 60px;" placeholder="Defina turmas, horários e espaços...">${g.domingo || ""}</textarea>
+                        <!-- TURNO MANHÃ -->
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <h5 style="color: #EC4899;"><i class="fa-solid fa-sun"></i> Turno Manhã</h5>
+                                <button class="btn-excluir" style="font-size:0.7rem; padding:4px 8px;" onclick="adicionarLinhaGrade('manha')">+ Adicionar Linha</button>
+                            </div>
+                            <div class="tabela-wrapper">
+                                <table class="tabela-grade-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Horário</th>
+                                            <th>Tipo</th>
+                                            <th>Segunda</th>
+                                            <th>Terça</th>
+                                            <th>Quarta</th>
+                                            <th>Quinta</th>
+                                            <th>Sexta</th>
+                                            <th>Sábado</th>
+                                            <th>Domingo</th>
+                                            <th>Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-grade-manha">
+                                        ${renderizarLinhasTurnoTabela(esc.gradeTurnos.manha, 'manha')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
-                        <button class="btn-salvar" style="background:#EC4899;" onclick="salvarGradeHorarios()"><i class="fa-solid fa-floppy-disk"></i> Salvar Grade da Escola</button>
+                        <!-- TURNO TARDE -->
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <h5 style="color: #EC4899;"><i class="fa-solid fa-cloud-sun"></i> Turno Tarde</h5>
+                                <button class="btn-excluir" style="font-size:0.7rem; padding:4px 8px;" onclick="adicionarLinhaGrade('tarde')">+ Adicionar Linha</button>
+                            </div>
+                            <div class="tabela-wrapper">
+                                <table class="tabela-grade-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Horário</th>
+                                            <th>Tipo</th>
+                                            <th>Segunda</th>
+                                            <th>Terça</th>
+                                            <th>Quarta</th>
+                                            <th>Quinta</th>
+                                            <th>Sexta</th>
+                                            <th>Sábado</th>
+                                            <th>Domingo</th>
+                                            <th>Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-grade-tarde">
+                                        ${renderizarLinhasTurnoTabela(esc.gradeTurnos.tarde, 'tarde')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TURNO NOITE -->
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <h5 style="color: #EC4899;"><i class="fa-solid fa-moon"></i> Turno Noite</h5>
+                                <button class="btn-excluir" style="font-size:0.7rem; padding:4px 8px;" onclick="adicionarLinhaGrade('noite')">+ Adicionar Linha</button>
+                            </div>
+                            <div class="tabela-wrapper">
+                                <table class="tabela-grade-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Horário</th>
+                                            <th>Tipo</th>
+                                            <th>Segunda</th>
+                                            <th>Terça</th>
+                                            <th>Quarta</th>
+                                            <th>Quinta</th>
+                                            <th>Sexta</th>
+                                            <th>Sábado</th>
+                                            <th>Domingo</th>
+                                            <th>Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-grade-noite">
+                                        ${renderizarLinhasTurnoTabela(esc.gradeTurnos.noite, 'noite')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <button class="btn-salvar" style="background:#EC4899;" onclick="salvarGradeTurnos()"><i class="fa-solid fa-floppy-disk"></i> Salvar Todas as Grades desta Escola</button>
                     </div>
 
                     <div id="bloco-grade-unificados" style="display: none;">
-                        <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 12px;">Panorama geral consolidado de todas as unidades de ensino cadastradas:</p>
+                        <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 12px;">Horário Universal: Todas as aulas e turnos consolidados em um só lugar de todas as escolas cadastradas:</p>
                         <div id="container-horarios-unificados"></div>
                     </div>
 
@@ -872,6 +962,87 @@
             }
         }
 
+        function renderizarLinhasTurnoTabela(linhas, turnoNome) {
+            if (!linhas || linhas.length === 0) return `<tr><td colspan="10" style="text-align:center; color:var(--texto-mutado);">Nenhum horário cadastrado.</td></tr>`;
+            return linhas.map((l, idx) => `
+                <tr>
+                    <td><input type="text" value="${l.horario || ''}" id="input-${turnoNome}-${idx}-horario" placeholder="Ex: 07:00 - 07:50"></td>
+                    <td>
+                        <select id="input-${turnoNome}-${idx}-tipo">
+                            <option value="Aula" ${l.tipo === 'Aula' ? 'selected' : ''}>Aula</option>
+                            <option value="Intervalo" ${l.tipo === 'Intervalo' ? 'selected' : ''}>Intervalo</option>
+                            <option value="Atividade" ${l.tipo === 'Atividade' ? 'selected' : ''}>Atividade</option>
+                            <option value="Outro" ${l.tipo === 'Outro' ? 'selected' : ''}>Outro</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${l.segunda || ''}" id="input-${turnoNome}-${idx}-segunda"></td>
+                    <td><input type="text" value="${l.terca || ''}" id="input-${turnoNome}-${idx}-terca"></td>
+                    <td><input type="text" value="${l.quarta || ''}" id="input-${turnoNome}-${idx}-quarta"></td>
+                    <td><input type="text" value="${l.quinta || ''}" id="input-${turnoNome}-${idx}-quinta"></td>
+                    <td><input type="text" value="${l.sexta || ''}" id="input-${turnoNome}-${idx}-sexta"></td>
+                    <td><input type="text" value="${l.sabado || ''}" id="input-${turnoNome}-${idx}-sabado"></td>
+                    <td><input type="text" value="${l.domingo || ''}" id="input-${turnoNome}-${idx}-domingo"></td>
+                    <td><button class="btn-excluir" style="padding:4px 6px;" onclick="removerLinhaGrade('${turnoNome}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function adicionarLinhaGrade(turnoNome) {
+            capturarDadosTabelasTurnosAtuais();
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(!esc.gradeTurnos[turnoNome]) esc.gradeTurnos[turnoNome] = [];
+            esc.gradeTurnos[turnoNome].push({
+                horario: "00:00 - 00:00", tipo: "Aula", segunda: "", terca: "", quarta: "", quinta: "", sexta: "", sabado: "", domingo: ""
+            });
+            salvarNoAparelho();
+            abrirModulo('horarios');
+        }
+
+        function removerLinhaGrade(turnoNome, indexLinha) {
+            capturarDadosTabelasTurnosAtuais();
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            esc.gradeTurnos[turnoNome].splice(indexLinha, 1);
+            salvarNoAparelho();
+            abrirModulo('horarios');
+        }
+
+        function capturarDadosTabelasTurnosAtuais() {
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(!esc || !esc.gradeTurnos) return;
+
+            ['manha', 'tarde', 'noite'].forEach(turno => {
+                const linhas = esc.gradeTurnos[turno];
+                if(linhas) {
+                    linhas.forEach((l, idx) => {
+                        const hEl = document.getElementById(`input-${turno}-${idx}-horario`);
+                        const tEl = document.getElementById(`input-${turno}-${idx}-tipo`);
+                        const segEl = document.getElementById(`input-${turno}-${idx}-segunda`);
+                        const terEl = document.getElementById(`input-${turno}-${idx}-terca`);
+                        const quaEl = document.getElementById(`input-${turno}-${idx}-quarta`);
+                        const quiEl = document.getElementById(`input-${turno}-${idx}-quinta`);
+                        const sexEl = document.getElementById(`input-${turno}-${idx}-sexta`);
+                        const sabEl = document.getElementById(`input-${turno}-${idx}-sabado`);
+                        const domEl = document.getElementById(`input-${turno}-${idx}-domingo`);
+
+                        if(hEl) l.horario = hEl.value;
+                        if(tEl) l.tipo = tEl.value;
+                        if(segEl) l.segunda = segEl.value;
+                        if(terEl) l.terca = terEl.value;
+                        if(quaEl) l.quarta = quaEl.value;
+                        if(quiEl) l.quinta = quiEl.value;
+                        if(sexEl) l.sexta = sexEl.value;
+                        if(sabEl) l.sabado = sabEl.value;
+                        if(domEl) l.domingo = domEl.value;
+                    });
+                }
+            });
+        }
+
+        function salvarGradeTurnos() {
+            capturarDadosTabelasTurnosAtuais();
+            salvarNoAparelho();
+        }
+
         function renderizarGradeUnificada() {
             const container = document.getElementById('container-horarios-unificados');
             if(!dadosApp.escolas || dadosApp.escolas.length === 0) {
@@ -880,19 +1051,52 @@
             }
 
             container.innerHTML = dadosApp.escolas.map((esc) => {
-                const g = esc.gradeHorarios || {};
+                const gt = esc.gradeTurnos || { manha: [], tarde: [], noite: [] };
                 return `
-                    <div style="background: var(--bg-inputs); border-left: 4px solid ${esc.cor || '#06B6D4'}; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
-                        <h5 style="color: ${esc.cor || '#06B6D4'}; margin-bottom: 8px; font-size: 0.95rem;">🏢 ${esc.nome}</h5>
-                        <div style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px; color: #CBD5E1;">
-                            <div><strong>Seg:</strong> ${g.segunda || '-'}</div>
-                            <div><strong>Ter:</strong> ${g.terca || '-'}</div>
-                            <div><strong>Qua:</strong> ${g.quarta || '-'}</div>
-                            <div><strong>Qui:</strong> ${g.quinta || '-'}</div>
-                            <div><strong>Sex:</strong> ${g.sexta || '-'}</div>
-                            <div><strong>Sáb:</strong> ${g.sabado || '-'}</div>
-                            <div><strong>Dom:</strong> ${g.domingo || '-'}</div>
-                        </div>
+                    <div style="background: var(--bg-inputs); border-left: 4px solid ${esc.cor || '#06B6D4'}; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <h5 style="color: ${esc.cor || '#06B6D4'}; margin-bottom: 12px; font-size: 1.05rem;">🏢 ${esc.nome} - Panorama Completo</h5>
+                        
+                        ${['manha', 'tarde', 'noite'].map(tName => {
+                            const arr = gt[tName] || [];
+                            if(arr.length === 0) return '';
+                            return `
+                                <div style="margin-bottom: 10px;">
+                                    <strong style="font-size:0.85rem; text-transform:uppercase; color:#EC4899;"><i class="fa-solid fa-clock"></i> Turno: ${tName}</strong>
+                                    <div class="tabela-wrapper" style="margin-top: 5px;">
+                                        <table class="tabela-grade-custom" style="font-size:0.75rem;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Horário</th>
+                                                    <th>Tipo</th>
+                                                    <th>Segunda</th>
+                                                    <th>Terça</th>
+                                                    <th>Quarta</th>
+                                                    <th>Quinta</th>
+                                                    <th>Sexta</th>
+                                                    <th>Sábado</th>
+                                                    <th>Domingo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${arr.map(l => `
+                                                    <tr>
+                                                        <td>${l.horario || '-'}</td>
+                                                        <td>${l.tipo || '-'}</td>
+                                                        <td>${l.segunda || '-'}</td>
+                                                        <td>${l.terca || '-'}</td>
+                                                        <td>${l.quarta || '-'}</td>
+                                                        <td>${l.quinta || '-'}</td>
+                                                        <td>${l.sexta || '-'}</td>
+                                                        <td>${l.sabado || '-'}</td>
+                                                        <td>${l.domingo || '-'}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 `;
             }).join('');
@@ -901,22 +1105,6 @@
         function salvarDiario() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].diarioTexto = document.getElementById('txt-diario').value; salvarNoAparelho(); } }
         function salvarDidatico() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].mapasTexto = document.getElementById('txt-mapas').value; salvarNoAparelho(); } }
         function salvarExercicios() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].exerciciosTexto = document.getElementById('txt-exercicios').value; salvarNoAparelho(); } }
-        
-        function salvarGradeHorarios() {
-            if(dadosApp.escolas[dadosApp.escolaAtiva]) {
-                dadosApp.escolas[dadosApp.escolaAtiva].gradeHorarios = {
-                    segunda: document.getElementById('gh-segunda').value,
-                    terca: document.getElementById('gh-terca').value,
-                    quarta: document.getElementById('gh-quarta').value,
-                    quinta: document.getElementById('gh-quinta').value,
-                    sexta: document.getElementById('gh-sexta').value,
-                    sabado: document.getElementById('gh-sabado').value,
-                    domingo: document.getElementById('gh-domingo').value
-                };
-                salvarNoAparelho();
-            }
-        }
-
         function salvarObsLivres() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].observacoesLivres = document.getElementById('txt-obs-livres').value; salvarNoAparelho(); } }
         function salvarReunioes() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].reunioesTexto = document.getElementById('txt-reunioes').value; salvarNoAparelho(); } }
 
