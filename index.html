@@ -118,7 +118,7 @@
         .btn-modelo { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--cor-escola-ativa); color: var(--cor-escola-ativa); font-size: 0.75rem; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .btn-modelo:hover { background: var(--cor-escola-ativa); color: #000; }
 
-        .tabs-planejamento, .tabs-grade { display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px; }
+        .tabs-planejamento { display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px; }
         .tab-btn { flex: 1; background: none; border: none; color: var(--texto-mutado); padding: 8px 10px; font-size: 0.8rem; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .tab-btn.ativo { background: var(--azul-premium); color: white; }
 
@@ -126,14 +126,12 @@
         .lista-anexos { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
         .item-anexo { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; }
 
-        /* Estilos específicos para a Grade de Horários customizada */
         .tabela-grade-custom { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.8rem; }
         .tabela-grade-custom th, .tabela-grade-custom td { border: 1px solid var(--borda-glow); padding: 8px; text-align: center; }
         .tabela-grade-custom th { background-color: rgba(236, 72, 153, 0.1); color: #EC4899; }
         .tabela-grade-custom input, .tabela-grade-custom select { width: 100%; background: var(--bg-inputs); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 6px; border-radius: 6px; font-size: 0.75rem; text-align: center; }
         .tabela-grade-custom td:first-child, .tabela-grade-custom td:nth-child(2) { background: rgba(6, 182, 212, 0.05); }
 
-        /* Modal customizado para seleção de cores */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 10000;
             display: flex; align-items: center; justify-content: center; padding: 20px;
@@ -220,7 +218,7 @@
             <div class="card rosa" onclick="abrirModulo('horarios')">
                 <i class="fa-solid fa-calendar-clock"></i>
                 <h4>Grade & Horários</h4>
-                <p>Cronograma operacional, turmas e unificados.</p>
+                <p>Cronograma operacional e turmas.</p>
             </div>
 
             <div class="card vermelho" onclick="abrirModulo('anotacoes')">
@@ -601,26 +599,6 @@
             });
         }
 
-        function mudarAbaGrade( aba ) {
-            ['escola', 'unificados'].forEach(tipo => {
-                const el = document.getElementById(`bloco-grade-${tipo}`);
-                const btn = document.getElementById(`tab-grade-${tipo}`);
-                if(el && btn) {
-                    if(tipo === aba) {
-                        el.style.display = 'block';
-                        btn.classList.add('ativo');
-                    } else {
-                        el.style.display = 'none';
-                        btn.classList.remove('ativo');
-                    }
-                }
-            });
-            if(aba === 'unificados') {
-                renderizarGradeUnificada();
-            }
-        }
-
-        // Funções de Anexo Genéricas para Módulos Específicos
         function processarAnexoGenerico(inputElement, tipoModulo, subTipo = '') {
             const arquivo = inputElement.files[0];
             if (!arquivo) return;
@@ -1039,11 +1017,6 @@
                         <strong>Turmas Disponíveis:</strong> ${listaTurmasStr}
                     </div>
 
-                    <div class="tabs-grade">
-                        <button class="tab-btn ativo" id="tab-grade-escola" onclick="mudarAbaGrade('escola')">Turnos desta Escola</button>
-                        <button class="tab-btn" id="tab-grade-unificados" onclick="mudarAbaGrade('unificados')">Horário Universal (Todas as Escolas)</button>
-                    </div>
-
                     <div id="bloco-grade-escola">
                         <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 12px;">Preencha os horários para cada turno (Manhã, Tarde e Noite):</p>
                         
@@ -1135,11 +1108,6 @@
                         </div>
 
                         <button class="btn-salvar" style="background:#EC4899;" onclick="salvarGradeTurnosComSenha()"><i class="fa-solid fa-floppy-disk"></i> Salvar / Editar Todas as Grades desta Escola</button>
-                    </div>
-
-                    <div id="bloco-grade-unificados" style="display: none;">
-                        <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 12px;">Horário Universal: Todas as escolas unificadas em uma única grade global por dia da semana:</p>
-                        <div id="container-horarios-unificados"></div>
                     </div>
 
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Grade fixada!</div>
@@ -1283,73 +1251,6 @@
                     });
                 }
             });
-        }
-
-        function renderizarGradeUnificada() {
-            const container = document.getElementById('container-horarios-unificados');
-            if(!dadosApp.escolas || dadosApp.escolas.length === 0) {
-                container.innerHTML = `<p style="color:var(--texto-mutado);">Nenhuma escola cadastrada.</p>`;
-                return;
-            }
-
-            const diasSemana = [
-                { chave: 'segunda', nome: 'Segunda-feira' },
-                { chave: 'terca', nome: 'Terça-feira' },
-                { chave: 'quarta', nome: 'Quarta-feira' },
-                { chave: 'quinta', nome: 'Quinta-feira' },
-                { chave: 'sexta', nome: 'Sexta-feira' },
-                { chave: 'sabado', nome: 'Sábado' },
-                { chave: 'domingo', nome: 'Domingo' }
-            ];
-
-            container.innerHTML = diasSemana.map(dia => {
-                let linhasDoDiaHTML = '';
-
-                dadosApp.escolas.forEach(esc => {
-                    const gt = esc.gradeTurnos || { manha: [], tarde: [], noite: [] };
-                    ['manha', 'tarde', 'noite'].forEach(turnoNome => {
-                        const arrLinhas = gt[turnoNome] || [];
-                        arrLinhas.forEach(l => {
-                            const valDia = l[dia.chave] ? l[dia.chave].trim() : '';
-                            if(valDia !== '' && valDia !== '-') {
-                                linhasDoDiaHTML += `
-                                    <tr>
-                                        <td><span style="color:${esc.cor || '#06B6D4'}; font-weight:700;">${esc.nome}</span></td>
-                                        <td style="text-transform:capitalize; color:#EC4899;">${turnoNome}</td>
-                                        <td>${l.horario || '-'}</td>
-                                        <td><strong>${valDia}</strong></td>
-                                    </tr>
-                                `;
-                            }
-                        });
-                    });
-                });
-
-                if(linhasDoDiaHTML === '') {
-                    linhasDoDiaHTML = `<tr><td colspan="4" style="text-align:center; color:var(--texto-mutado);">Nenhuma atividade alocada para este dia em nenhuma escola.</td></tr>`;
-                }
-
-                return `
-                    <div style="background: var(--bg-inputs); border-radius: 8px; padding: 15px; margin-bottom: 20px; border: 1px solid var(--borda-glow);">
-                        <h5 style="color: var(--ciano-glow); margin-bottom: 10px; font-size: 1rem;"><i class="fa-solid fa-calendar-day"></i> ${dia.nome}</h5>
-                        <div class="tabela-wrapper">
-                            <table class="tabela-grade-custom" style="font-size:0.75rem;">
-                                <thead>
-                                    <tr>
-                                        <th>Escola</th>
-                                        <th>Turno</th>
-                                        <th>Horário</th>
-                                        <th>Atividade / Turma</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${linhasDoDiaHTML}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
 
         function salvarDiario() { if(dadosApp.escolas[dadosApp.escolaAtiva]) { dadosApp.escolas[dadosApp.escolaAtiva].diarioTexto = document.getElementById('txt-diario').value; salvarNoAparelho(); } }
