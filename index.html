@@ -310,7 +310,7 @@
         }
 
         function verificarSenhaExclusao() {
-            const checa = prompt("Digite sua Senha Master para confirmar:");
+            const checa = prompt("Digite sua Senha Master para confirmar a exclusão do arquivo:");
             return checa === senhaMaster;
         }
 
@@ -635,26 +635,31 @@
             reader.readAsDataURL(arquivo);
         }
 
+        // AGORA EXIGE SENHA MASTER PARA REMOVER QUALQUER ANEXO/ARQUIVO DO SISTEMA
         function removerAnexoGenerico(tipoModulo, indexAnexo, subTipo = '') {
-            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
-            if (!esc) return;
-            const turma = esc.turmas && esc.turmas.length > 0 ? esc.turmas[esc.turmaAtiva] : null;
-            let listaAlvo = null;
+            if (verificarSenhaExclusao()) {
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                if (!esc) return;
+                const turma = esc.turmas && esc.turmas.length > 0 ? esc.turmas[esc.turmaAtiva] : null;
+                let listaAlvo = null;
 
-            if (tipoModulo === 'planoTurma' && turma) {
-                if (subTipo === 'mensal') listaAlvo = turma.planoMensalAnexos;
-                else if (subTipo === 'semestral') listaAlvo = turma.planoSemestralAnexos;
-                else if (subTipo === 'anual') listaAlvo = turma.planoAnualAnexos;
-            } else if (tipoModulo === 'didatico') listaAlvo = esc.mapasAnexos;
-            else if (tipoModulo === 'exercicios') listaAlvo = esc.exerciciosAnexos;
-            else if (tipoModulo === 'diario') listaAlvo = esc.diarioAnexos;
-            else if (tipoModulo === 'alunosDocs') listaAlvo = esc.alunosAnexos;
-            else if (tipoModulo === 'reunioes') listaAlvo = esc.reunioesAnexos;
+                if (tipoModulo === 'planoTurma' && turma) {
+                    if (subTipo === 'mensal') listaAlvo = turma.planoMensalAnexos;
+                    else if (subTipo === 'semestral') listaAlvo = turma.planoSemestralAnexos;
+                    else if (subTipo === 'anual') listaAlvo = turma.planoAnualAnexos;
+                } else if (tipoModulo === 'didatico') listaAlvo = esc.mapasAnexos;
+                else if (tipoModulo === 'exercicios') listaAlvo = esc.exerciciosAnexos;
+                else if (tipoModulo === 'diario') listaAlvo = esc.diarioAnexos;
+                else if (tipoModulo === 'alunosDocs') listaAlvo = esc.alunosAnexos;
+                else if (tipoModulo === 'reunioes') listaAlvo = esc.reunioesAnexos;
 
-            if(listaAlvo) {
-                listaAlvo.splice(indexAnexo, 1);
-                salvarNoAparelho();
-                abrirModulo(moduloAtivoGlobal);
+                if(listaAlvo) {
+                    listaAlvo.splice(indexAnexo, 1);
+                    salvarNoAparelho();
+                    abrirModulo(moduloAtivoGlobal);
+                }
+            } else {
+                alert("Senha Master incorreta! Exclusão de arquivo cancelada.");
             }
         }
 
@@ -708,12 +713,17 @@
             reader.readAsDataURL(arquivo);
         }
 
+        // EXIGE SENHA MASTER PARA REMOVER ANEXO DE UMA AULA ESPECÍFICA
         function removerAnexoAula(indexAula, indexAnexo) {
-            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
-            const turma = esc.turmas[esc.turmaAtiva];
-            turma.aulas[indexAula].anexos.splice(indexAnexo, 1);
-            salvarNoAparelho();
-            renderizarAulasTurma();
+            if (verificarSenhaExclusao()) {
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                const turma = esc.turmas[esc.turmaAtiva];
+                turma.aulas[indexAula].anexos.splice(indexAnexo, 1);
+                salvarNoAparelho();
+                renderizarAulasTurma();
+            } else {
+                alert("Senha Master incorreta! Exclusão de arquivo cancelada.");
+            }
         }
 
         function inserirModeloPlanejamento(indexAula, tipo) {
@@ -786,7 +796,7 @@
                         ${(aula.anexos || []).map((anx, aIdx) => `
                             <div class="item-anexo">
                                 <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
-                                <button onclick="removerAnexoAula(${idx}, ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                <button onclick="removerAnexoAula(${idx}, ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;" title="Exige Senha Master"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         `).join('')}
                     </div>
@@ -853,7 +863,7 @@
                                 ${(tAtual.planoMensalAnexos || []).map((anx, aIdx) => `
                                     <div class="item-anexo">
                                         <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
-                                        <button onclick="removerAnexoGenerico('planoTurma', ${aIdx}, 'mensal')" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                        <button onclick="removerAnexoGenerico('planoTurma', ${aIdx}, 'mensal')" style="background:none; border:none; color:#EF4444; cursor:pointer;" title="Exige Senha Master"><i class="fa-solid fa-xmark"></i></button>
                                     </div>
                                 `).join('')}
                             </div>
@@ -871,7 +881,7 @@
                                 ${(tAtual.planoSemestralAnexos || []).map((anx, aIdx) => `
                                     <div class="item-anexo">
                                         <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
-                                        <button onclick="removerAnexoGenerico('planoTurma', ${aIdx}, 'semestral')" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                        <button onclick="removerAnexoGenerico('planoTurma', ${aIdx}, 'semestral')" style="background:none; border:none; color:#EF4444; cursor:pointer;" title="Exige Senha Master"><i class="fa-solid fa-xmark"></i></button>
                                     </div>
                                 `).join('')}
                             </div>
@@ -889,7 +899,7 @@
                                 ${(tAtual.planoAnualAnexos || []).map((anx, aIdx) => `
                                     <div class="item-anexo">
                                         <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
-                                        <button onclick="removerAnexoGenerico('planoTurma', ${aIdx}, 'anual')" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                        <button onclick="removerAnexoGenerico('planoTurma', ${aIdx}, 'anual')" style="background:none; border:none; color:#EF4444; cursor:pointer;" title="Exige Senha Master"><i class="fa-solid fa-xmark"></i></button>
                                     </div>
                                 `).join('')}
                             </div>
@@ -944,7 +954,7 @@
                         ${(esc.alunosAnexos || []).map((anx, aIdx) => `
                             <div class="item-anexo">
                                 <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
-                                <button onclick="removerAnexoGenerico('alunosDocs', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                <button onclick="removerAnexoGenerico('alunosDocs', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;" title="Exige Senha Master"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         `).join('')}
                     </div>
@@ -969,7 +979,7 @@
                         ${(esc.mapasAnexos || []).map((anx, aIdx) => `
                             <div class="item-anexo">
                                 <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
-                                <button onclick="removerAnexoGenerico('didatico', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                <button onclick="removerAnexoGenerico('didatico', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;" title="Exige Senha Master"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         `).join('')}
                     </div>
@@ -991,7 +1001,7 @@
                         ${(esc.exerciciosAnexos || []).map((anx, aIdx) => `
                             <div class="item-anexo">
                                 <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
-                                <button onclick="removerAnexoGenerico('exercicios', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                <button onclick="removerAnexoGenerico('exercicios', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;" title="Exige Senha Master"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         `).join('')}
                     </div>
@@ -1126,7 +1136,7 @@
                         ${(esc.diarioAnexos || []).map((anx, aIdx) => `
                             <div class="item-anexo">
                                 <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
-                                <button onclick="removerAnexoGenerico('diario', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                <button onclick="removerAnexoGenerico('diario', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;" title="Exige Senha Master"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         `).join('')}
                     </div>
@@ -1148,7 +1158,7 @@
                         ${(esc.reunioesAnexos || []).map((anx, aIdx) => `
                             <div class="item-anexo">
                                 <a href="${anx.dados}" download="${anx.nome}" style="color: var(--cor-escola-ativa); text-decoration: underline;"><i class="fa-solid fa-file"></i> ${anx.nome}</a>
-                                <button onclick="removerAnexoGenerico('reunioes', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                                <button onclick="removerAnexoGenerico('reunioes', ${aIdx})" style="background:none; border:none; color:#EF4444; cursor:pointer;" title="Exige Senha Master"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         `).join('')}
                     </div>
