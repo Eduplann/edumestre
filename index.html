@@ -650,7 +650,7 @@
             reader.readAsDataURL(arquivo);
         }
 
-        // FUNÇÃO DE SCANNER COM EXTRATOR DE TEXTO (OCR) USANDO TESSERACT.JS
+        // FUNÇÃO DE SCANNER COM EXTRATOR DE TEXTO (OCR) USANDO TESSERACT.JS (Buscando da Galeria)
         async function processarScannerDocumentoComOCR(inputElement) {
             const arquivo = inputElement.files[0];
             if (!arquivo) return;
@@ -703,7 +703,7 @@
             } catch (erro) {
                 console.error(erro);
                 if(loadingBox) loadingBox.style.display = 'none';
-                alert("Erro ao tentar extrair o texto da imagem. Tente novamente com uma foto mais nítida.");
+                alert("Erro ao tentar extrair o texto da imagem. Tente novamente com uma imagem mais nítida.");
             }
         }
 
@@ -1257,11 +1257,11 @@
                 if(!esc.scannerScans) esc.scannerScans = [];
                 painel.innerHTML = `
                     <h4 style="color: #14B8A6; margin-bottom: 15px;"><i class="fa-solid fa-camera-retro"></i> Scanner & OCR (Leitor de Texto) - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
-                    <p style="font-size: 0.85rem; color: var(--texto-mutado); margin-bottom: 15px;">Aponte a câmera para o livro ou documento para capturar e extrair o texto impresso automaticamente.</p>
+                    <p style="font-size: 0.85rem; color: var(--texto-mutado); margin-bottom: 15px;">Selecione uma imagem da galeria para capturar e extrair o texto impresso automaticamente.</p>
                     
                     <div class="box-anexo" style="border-color: #14B8A6; background: rgba(20, 184, 166, 0.05); margin-bottom: 15px;">
-                        <span><i class="fa-solid fa-camera"></i> <strong>Focar Câmera / Escanear:</strong></span>
-                        <input type="file" accept="image/*" capture="environment" style="font-size:0.75rem; color: #fff;" onchange="processarScannerDocumentoComOCR(this)">
+                        <span><i class="fa-solid fa-image"></i> <strong>Buscar Imagem na Galeria:</strong></span>
+                        <input type="file" accept="image/*" style="font-size:0.75rem; color: #fff;" onchange="processarScannerDocumentoComOCR(this)">
                     </div>
 
                     <div id="loading-ocr">Processando OCR... Aguarde.</div>
