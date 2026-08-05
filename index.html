@@ -95,6 +95,7 @@
         .card.rosa i { color: #EC4899; }
         .card.vermelho i { color: #EF4444; }
         .card.indigo i { color: #6366F1; }
+        .card.teal i { color: #14B8A6; }
 
         .painel-conteudo { background-color: var(--bg-cards); border-radius: 16px; padding: 22px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .campo-busca, .textarea-app { width: 100%; padding: 12px 14px; background-color: var(--bg-inputs); border: 1px solid var(--borda-glow); border-radius: 10px; color: #fff; margin-bottom: 15px; font-size: 0.9rem; }
@@ -150,6 +151,14 @@
         }
         .opcao-cor:hover { transform: scale(1.05); }
         .opcao-cor.selecionada { border-color: #FFF; transform: scale(1.08); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        
+        .scanner-preview-box {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 15px;
+        }
+        .scanner-item {
+            background: var(--bg-inputs); border: 1px solid var(--borda-glow); border-radius: 8px; padding: 8px; text-align: center;
+        }
+        .scanner-item img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -231,6 +240,12 @@
                 <i class="fa-solid fa-handshake-angle"></i>
                 <h4>Reuniões Pedagógicas</h4>
                 <p>Encontros, atas e arquivos anexos.</p>
+            </div>
+
+            <div class="card teal" onclick="abrirModulo('scanner')">
+                <i class="fa-solid fa-camera-retro"></i>
+                <h4>Scanner & Docs</h4>
+                <p>Digitalize e arquive provas, redações e tarefas.</p>
             </div>
         </div>
 
@@ -424,6 +439,7 @@
                 exerciciosTexto: "", exerciciosAnexos: [], 
                 observacoesLivres: "", 
                 reunioesTexto: "", reunioesAnexos: [],
+                scannerScans: [],
                 gradeTurnos: {
                     manha: gerarLinhasGradeVazias(),
                     tarde: gerarLinhasGradeVazias(),
@@ -635,7 +651,41 @@
             reader.readAsDataURL(arquivo);
         }
 
-        // AGORA EXIGE SENHA MASTER PARA REMOVER QUALQUER ANEXO/ARQUIVO DO SISTEMA
+        function processarScannerDocumento(inputElement) {
+            const arquivo = inputElement.files[0];
+            if (!arquivo) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                if (!esc) return;
+                if (!esc.scannerScans) esc.scannerScans = [];
+                
+                const nomePadrao = prompt("Nome/Descrição deste documento digitalizado:", arquivo.name);
+                if (!nomePadrao) return;
+
+                esc.scannerScans.push({
+                    nome: nomePadrao.trim(),
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    dados: e.target.result
+                });
+                salvarNoAparelho();
+                abrirModulo('scanner');
+            };
+            reader.readAsDataURL(arquivo);
+        }
+
+        function removerScanDocumento(indexScan) {
+            if (verificarSenhaExclusao()) {
+                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                if (!esc || !esc.scannerScans) return;
+                esc.scannerScans.splice(indexScan, 1);
+                salvarNoAparelho();
+                abrirModulo('scanner');
+            } else {
+                alert("Senha Master incorreta! Exclusão cancelada.");
+            }
+        }
+
         function removerAnexoGenerico(tipoModulo, indexAnexo, subTipo = '') {
             if (verificarSenhaExclusao()) {
                 const esc = dadosApp.escolas[dadosApp.escolaAtiva];
@@ -713,7 +763,6 @@
             reader.readAsDataURL(arquivo);
         }
 
-        // EXIGE SENHA MASTER PARA REMOVER ANEXO DE UMA AULA ESPECÍFICA
         function removerAnexoAula(indexAula, indexAnexo) {
             if (verificarSenhaExclusao()) {
                 const esc = dadosApp.escolas[dadosApp.escolaAtiva];
@@ -840,7 +889,7 @@
                                 ${esc.turmas.map((t, i) => `<option value="${i}" ${esc.turmaAtiva == i ? 'selected' : ''}>${t.nomeTurma}</option>`).join('')}
                             </select>
                             <button onclick="editarTurmaAtiva()" style="background:none; border:none; color:#F59E0B; font-size:1.1rem; cursor:pointer;" title="Editar Nome da Turma"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="excluirTurmaAtiva()" style="background:none; border:none; color:#EF4444; font-size:1.1rem; cursor:pointer;" title="Excluir Turma Atual"><i class="fa-solid fa-trash-can"></i></button>
+                            <button onclick="excluirTurmaAtiva()" style="background:none; border:none; color:#EF4444; font-size:1.1rem; cursor:pointer;" title="Exuir Turma Atual"><i class="fa-solid fa-trash-can"></i></button>
                             <button class="btn-salvar" style="background:var(--cor-escola-ativa); color:#000; margin:0; width:auto; white-space:nowrap;" onclick="adicionarNovaTurma()">+ Sala</button>
                         </div>
 
@@ -851,7 +900,6 @@
                             <button class="tab-btn" id="tab-aulas" onclick="mudarAbaPlanejamento('aulas')">Aulas</button>
                         </div>
 
-                        <!-- MENSAL -->
                         <div id="bloco-plano-mensal">
                             <label style="font-size:0.8rem; color:var(--cor-escola-ativa); font-weight:600; display:block; margin-bottom:5px;">Planejamento Mensal</label>
                             <textarea id="txt-turma-mensal" class="textarea-app" style="height: 120px;" placeholder="Objetivos e metas para o mês nesta turma..." oninput="salvarDadosTurma()"></textarea>
@@ -869,7 +917,6 @@
                             </div>
                         </div>
 
-                        <!-- SEMESTRAL -->
                         <div id="bloco-plano-semestral" style="display: none;">
                             <label style="font-size:0.8rem; color:var(--cor-escola-ativa); font-weight:600; display:block; margin-bottom:5px;">Planejamento Semestral</label>
                             <textarea id="txt-turma-semestral" class="textarea-app" style="height: 120px;" placeholder="Diretrizes gerais para o semestre..." oninput="salvarDadosTurma()"></textarea>
@@ -887,7 +934,6 @@
                             </div>
                         </div>
 
-                        <!-- ANUAL -->
                         <div id="bloco-plano-anual" style="display: none;">
                             <label style="font-size:0.8rem; color:var(--cor-escola-ativa); font-weight:600; display:block; margin-bottom:5px;">Planejamento Anual</label>
                             <textarea id="txt-turma-anual" class="textarea-app" style="height: 120px;" placeholder="Ementa e metas gerais do ano letivo..." oninput="salvarDadosTurma()"></textarea>
@@ -905,7 +951,6 @@
                             </div>
                         </div>
 
-                        <!-- AULAS -->
                         <div id="bloco-plano-aulas" style="display: none;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                 <span style="font-size: 0.85rem; color: var(--texto-mutado);">Aulas cadastradas:</span>
@@ -1030,7 +1075,6 @@
                     <div id="bloco-grade-escola">
                         <p style="font-size: 0.8rem; color: var(--texto-mutado); margin-bottom: 12px;">Preencha os horários para cada turno (Manhã, Tarde e Noite):</p>
                         
-                        <!-- TURNO MANHÃ -->
                         <div style="margin-bottom: 25px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <h5 style="color: #EC4899;"><i class="fa-solid fa-sun"></i> Turno Manhã</h5>
@@ -1059,7 +1103,6 @@
                             </div>
                         </div>
 
-                        <!-- TURNO TARDE -->
                         <div style="margin-bottom: 25px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <h5 style="color: #EC4899;"><i class="fa-solid fa-cloud-sun"></i> Turno Tarde</h5>
@@ -1088,7 +1131,6 @@
                             </div>
                         </div>
 
-                        <!-- TURNO NOITE -->
                         <div style="margin-bottom: 25px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <h5 style="color: #EC4899;"><i class="fa-solid fa-moon"></i> Turno Noite</h5>
@@ -1165,6 +1207,34 @@
 
                     <button class="btn-salvar" style="background:#6366F1;" onclick="salvarReunioes()"><i class="fa-solid fa-floppy-disk"></i> Salvar Reuniões</button>
                     <div id="status-salva" class="status-salvamento"><i class="fa-solid fa-circle-check"></i> Reunião salva!</div>
+                `;
+            }
+            else if (modulo === 'scanner') {
+                if(!esc.scannerScans) esc.scannerScans = [];
+                painel.innerHTML = `
+                    <h4 style="color: #14B8A6; margin-bottom: 15px;"><i class="fa-solid fa-camera-retro"></i> Scanner & Docs - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
+                    <p style="font-size: 0.85rem; color: var(--texto-mutado); margin-bottom: 15px;">Digitalize documentos, provas físicas ou redações usando a câmera do seu dispositivo ou enviando uma imagem.</p>
+                    
+                    <div class="box-anexo" style="border-color: #14B8A6; background: rgba(20, 184, 166, 0.05); margin-bottom: 20px;">
+                        <span><i class="fa-solid fa-camera"></i> <strong>Capturar / Enviar Digitalização:</strong></span>
+                        <input type="file" accept="image/*" capture="environment" style="font-size:0.75rem; color: #fff;" onchange="processarScannerDocumento(this)">
+                    </div>
+
+                    <div style="font-weight: 700; font-size: 0.9rem; color: #E2E8F0; margin-bottom: 10px;">Documentos Digitalizados Salvos:</div>
+                    ${esc.scannerScans.length === 0 ? `<p style="color: var(--texto-mutado); font-size: 0.85rem;">Nenhum documento digitalizado nesta escola.</p>` : ''}
+                    
+                    <div class="scanner-preview-box">
+                        ${esc.scannerScans.map((scan, sIdx) => `
+                            <div class="scanner-item">
+                                <a href="${scan.dados}" target="_blank">
+                                    <img src="${scan.dados}" alt="${scan.nome}">
+                                </a>
+                                <div style="font-size: 0.75rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${scan.nome}">${scan.nome}</div>
+                                <div style="font-size: 0.65rem; color: var(--texto-mutado); margin-bottom: 5px;">${scan.data}</div>
+                                <button class="btn-excluir" style="width:100%; padding: 4px;" onclick="removerScanDocumento(${sIdx})"><i class="fa-solid fa-trash"></i> Excluir</button>
+                            </div>
+                        `).join('')}
+                    </div>
                 `;
             }
         }
