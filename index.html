@@ -12,6 +12,9 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Biblioteca Tesseract.js para OCR (Extração de texto de imagens) -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
         :root {
@@ -153,12 +156,16 @@
         .opcao-cor.selecionada { border-color: #FFF; transform: scale(1.08); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
         
         .scanner-preview-box {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 15px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-top: 15px;
         }
         .scanner-item {
             background: var(--bg-inputs); border: 1px solid var(--borda-glow); border-radius: 8px; padding: 8px; text-align: center;
         }
         .scanner-item img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; }
+        
+        #loading-ocr {
+            display: none; background: rgba(20, 184, 166, 0.1); border: 1px solid #14B8A6; padding: 12px; border-radius: 8px; text-align: center; color: #14B8A6; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -244,8 +251,8 @@
 
             <div class="card teal" onclick="abrirModulo('scanner')">
                 <i class="fa-solid fa-camera-retro"></i>
-                <h4>Scanner & Docs</h4>
-                <p>Digitalize e arquive provas, redações e tarefas.</p>
+                <h4>Scanner & OCR</h4>
+                <p>Extraia textos de fotos de provas e redações.</p>
             </div>
         </div>
 
@@ -651,27 +658,72 @@
             reader.readAsDataURL(arquivo);
         }
 
-        function processarScannerDocumento(inputElement) {
+        // FUNÇÃO DE SCANNER COM EXTRATOR DE TEXTO (OCR) USANDO TESSERACT.JS
+        async function processarScannerDocumentoComOCR(inputElement) {
             const arquivo = inputElement.files[0];
             if (!arquivo) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const esc = dadosApp.escolas[dadosApp.escolaAtiva];
-                if (!esc) return;
-                if (!esc.scannerScans) esc.scannerScans = [];
-                
-                const nomePadrao = prompt("Nome/Descrição deste documento digitalizado:", arquivo.name);
-                if (!nomePadrao) return;
 
-                esc.scannerScans.push({
-                    nome: nomePadrao.trim(),
-                    data: new Date().toLocaleDateString('pt-BR'),
-                    dados: e.target.result
-                });
+            const loadingBox = document.getElementById('loading-ocr');
+            if(loadingBox) loadingBox.style.display = 'block';
+
+            try {
+                // Executa OCR na imagem utilizando idioma português ('por')
+                const resultadoOCR = await Tesseract.recognize(
+                    arquivo,
+                    'por',
+                    { 
+                        logger: m => {
+                            if(m.status === 'recognizing text' && loadingBox) {
+                                let progresso = Math.round(m.progress * 100);
+                                loadingBox.innerText = `Processando OCR (Extraindo texto): ${progresso}%...`;
+                            }
+                        } 
+                    }
+                );
+
+                const textoExtraido = resultadoOCR.data.text ? resultadoOCR.data.text.trim() : "Nenhum texto detectado.";
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+                    if (!esc) return;
+                    if (!esc.scannerScans) esc.scannerScans = [];
+                    
+                    const nomePadrao = prompt("Nome/Descrição deste documento digitalizado:", arquivo.name);
+                    if (!nomePadrao) {
+                        if(loadingBox) loadingBox.style.display = 'none';
+                        return;
+                    }
+
+                    esc.scannerScans.push({
+                        nome: nomePadrao.trim(),
+                        data: new Date().toLocaleDateString('pt-BR'),
+                        dados: e.target.result,
+                        textoExtraido: textoExtraido
+                    });
+                    
+                    salvarNoAparelho();
+                    if(loadingBox) loadingBox.style.display = 'none';
+                    abrirModulo('scanner');
+                };
+                reader.readAsDataURL(arquivo);
+
+            } catch (erro) {
+                console.error(erro);
+                if(loadingBox) loadingBox.style.display = 'none';
+                alert("Erro ao tentar extrair o texto da imagem. Tente novamente com uma foto mais nítida.");
+            }
+        }
+
+        function salvarTextoEditadoScan(indexScan) {
+            const campoTexto = document.getElementById(`txt-scan-edit-${indexScan}`);
+            if(!campoTexto) return;
+            const esc = dadosApp.escolas[dadosApp.escolaAtiva];
+            if(esc && esc.scannerScans && esc.scannerScans[indexScan]) {
+                esc.scannerScans[indexScan].textoExtraido = campoTexto.value;
                 salvarNoAparelho();
-                abrirModulo('scanner');
-            };
-            reader.readAsDataURL(arquivo);
+                alert("Texto extraído atualizado com sucesso!");
+            }
         }
 
         function removerScanDocumento(indexScan) {
@@ -1212,26 +1264,39 @@
             else if (modulo === 'scanner') {
                 if(!esc.scannerScans) esc.scannerScans = [];
                 painel.innerHTML = `
-                    <h4 style="color: #14B8A6; margin-bottom: 15px;"><i class="fa-solid fa-camera-retro"></i> Scanner & Docs - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
-                    <p style="font-size: 0.85rem; color: var(--texto-mutado); margin-bottom: 15px;">Digitalize documentos, provas físicas ou redações usando a câmera do seu dispositivo ou enviando uma imagem.</p>
+                    <h4 style="color: #14B8A6; margin-bottom: 15px;"><i class="fa-solid fa-camera-retro"></i> Scanner & OCR (Leitor de Texto) - <span style="font-size:0.85rem; color:#fff; background:${esc.cor || '#06B6D4'}; padding:2px 8px; border-radius:6px;">${esc.nome}</span></h4>
+                    <p style="font-size: 0.85rem; color: var(--texto-mutado); margin-bottom: 15px;">Tire foto ou envie a imagem de uma prova, redação ou documento. O sistema fará a leitura automática (OCR) do texto impresso/manuscrito.</p>
                     
-                    <div class="box-anexo" style="border-color: #14B8A6; background: rgba(20, 184, 166, 0.05); margin-bottom: 20px;">
-                        <span><i class="fa-solid fa-camera"></i> <strong>Capturar / Enviar Digitalização:</strong></span>
-                        <input type="file" accept="image/*" capture="environment" style="font-size:0.75rem; color: #fff;" onchange="processarScannerDocumento(this)">
+                    <div class="box-anexo" style="border-color: #14B8A6; background: rgba(20, 184, 166, 0.05); margin-bottom: 15px;">
+                        <span><i class="fa-solid fa-camera"></i> <strong>Escanear / Extrair Texto:</strong></span>
+                        <input type="file" accept="image/*" capture="environment" style="font-size:0.75rem; color: #fff;" onchange="processarScannerDocumentoComOCR(this)">
                     </div>
 
-                    <div style="font-weight: 700; font-size: 0.9rem; color: #E2E8F0; margin-bottom: 10px;">Documentos Digitalizados Salvos:</div>
+                    <div id="loading-ocr">Processando OCR... Aguarde.</div>
+
+                    <div style="font-weight: 700; font-size: 0.9rem; color: #E2E8F0; margin-bottom: 10px;">Documentos e Textos Digitalizados:</div>
                     ${esc.scannerScans.length === 0 ? `<p style="color: var(--texto-mutado); font-size: 0.85rem;">Nenhum documento digitalizado nesta escola.</p>` : ''}
                     
-                    <div class="scanner-preview-box">
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px;">
                         ${esc.scannerScans.map((scan, sIdx) => `
-                            <div class="scanner-item">
-                                <a href="${scan.dados}" target="_blank">
-                                    <img src="${scan.dados}" alt="${scan.nome}">
-                                </a>
-                                <div style="font-size: 0.75rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${scan.nome}">${scan.nome}</div>
-                                <div style="font-size: 0.65rem; color: var(--texto-mutado); margin-bottom: 5px;">${scan.data}</div>
-                                <button class="btn-excluir" style="width:100%; padding: 4px;" onclick="removerScanDocumento(${sIdx})"><i class="fa-solid fa-trash"></i> Excluir</button>
+                            <div style="background: var(--bg-inputs); border: 1px solid var(--borda-glow); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <strong style="color: #14B8A6; font-size: 0.95rem;">${scan.nome}</strong>
+                                        <div style="font-size: 0.7rem; color: var(--texto-mutado);">${scan.data}</div>
+                                    </div>
+                                    <button class="btn-excluir" onclick="removerScanDocumento(${sIdx})"><i class="fa-solid fa-trash"></i> Excluir</button>
+                                </div>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start;">
+                                    <a href="${scan.dados}" target="_blank" style="flex: 0 0 100px;">
+                                        <img src="${scan.dados}" alt="${scan.nome}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid var(--borda-glow);">
+                                    </a>
+                                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+                                        <label style="font-size: 0.75rem; color: var(--texto-mutado);">Texto Extraído (Editável):</label>
+                                        <textarea id="txt-scan-edit-${sIdx}" class="textarea-app" style="height: 100px; font-size: 0.8rem; margin-bottom: 0;">${scan.textoExtraido || ''}</textarea>
+                                        <button class="btn-salvar" style="background: #14B8A6; color: #000; padding: 6px; font-size: 0.75rem; margin-top: 4px;" onclick="salvarTextoEditadoScan(${sIdx})"><i class="fa-solid fa-floppy-disk"></i> Atualizar Texto</button>
+                                    </div>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
